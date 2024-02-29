@@ -34,9 +34,9 @@ make
 
 ## Tema
 
-Era necessario implementare almeno uno scenario e scrivere il codice in maniera che fosse facilmente implementabili altri scenari, per questo motivo ho deciso di implementare una sola scena: "Fuggire dalla prigione"
+Era necessario implementare almeno uno scenario e scrivere il codice in maniera che fosse facilmente implementabili altri scenari, per questo motivo ho deciso di implementare una sola scena: "Prison Break"
 
-### Fuggire dalla prigione
+### Prison Break
 
 Dopo aver fatto il login e aver scelto questo scenario si è davanti ad una scelta, si può partecipare come prigioniero e scappare dalla prigione oppure si può partecipare come secondino corrotto ([vedere client aggiuntivo](#client-aggiuntivo)).
 
@@ -46,41 +46,65 @@ Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\
 
 * **look letto**: sotto il letto hai trovato un \*\*telefono\*\* e delle \*\*monete\*\*
 
-    * \*\*telefono\*\*: Puoi usare il telefono per chiamare il secondino corrotto, client aggiuntivo, se il client non si è connesso non risponde nessuno al telefono. Altrimenti se è presente risponde il client aggiuntivo chiedendo un numero di monete
+    * telefono: Puoi usare il telefono per chiamare il secondino corrotto, client aggiuntivo, se il client non si è connesso non risponde nessuno al telefono. Altrimenti se è presente risponde il client aggiuntivo chiedendo un numero di monete
         
-        * look \*\*telefono\*\*: Sul numero di telefono è salvato un solo numero.
+        * look telefono: Sul numero di telefono è salvato un solo numero.
 
-        * use \*\*telefono\*\*: Chiamo il numero salvato. Biiiip. Biiiip. 
+        * use telefono: Chiamo il numero salvato. Biiiip. Biiiip. 
 
-        * take \*\*telefono\*\*                        
+        * take telefono                        
 
-    * \*\*monete\*\*
+    * monete
 
-        * look \*\*monete\*\*: Sono delle monete d'oro.
+        * look monete: Sono delle monete d'oro.
 
-        * use \*\*monete\*\*: Le monete non si possono usare da sole.
+        * use monete: Le monete non si possono usare da sole.
 
-        * take \*\*monete\*\*    
+        * take monete    
 
 * **look McLovin**: McLovin è un ex chimico, forse può esserti utile. Però ti aiuterà solo a patto di rispondere ad un indovinello.
 
     * Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono? 
 
-    > rispondendo bene ti dice che usando il telefono e il sapone puoi creare una bomba
+        Costruire una bomba è molto facile, hai provato con il t*** e il s***?
 
-* **look scaffale**: nello scaffale c'è una \*\*scatola\*\* e delle \*\*monete\*\*
+* **look scaffale**: nello scaffale c'è una \*\*scatola\*\* e delle \*\*monete\*\*.
 
-    // la scatola ha un quiz perchè c'è un lucchetto. La scatola ti da il sapone e delle monete
-    // il codice è il continuo di questa sequenza
-    // 11
-    // 21
-    // 1211
-    // 111221
-    // le monete le posso raccogliere.
+    * look scatola: La scatola è bloccata da un lucchetto. Il codice del lucchetto è il continuo di questa sequenza
+        11
+        21
+        1211
+        111221
+
+        dentoro la scatola c'è del \*\*sapone\*\* e altre \*\*monete\*\*.
+
+        * sapone
+
+            * use sapone: Ancora non è il momento di lavarsi.
+
+            * take sapone 
+
+            * use sapone telefono (o use telefono sapone): Hai smontato il telefono è hai preso la batteria. Tramite la batteria e il sapone hai costruito una \*\*bomba\*\*
+
+                * take bomba
+
+                * use bomba sbarre (o use sbarre bomba): Complimenti sei riuscito ad evadere!
+
+
+    * monete
+
+        * look monete: Sono delle monete d'oro.
+
+        * use monete: Le monete non si possono usare da sole.
+
+        * take monete  
+
 
 * **look finestra**: la finestra ha le \*\*sbarre\*\*.
 
-    // le sbarre non fanno niente almeno che non si usa la bomba craftata con telefono e sapone
+    * take sbarre: non si possono prendere
+
+    * use bomba sbarre (o use sbarre bomba): Complimenti sei riuscito ad evadere!
 
 #### Client aggiuntivo
 
