@@ -44,7 +44,7 @@ Dopo aver fatto il login e aver scelto questo scenario si è davanti ad una scel
 
 Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\+\+ e una \+\+finestra\+\+. Mentre dall'altro lato della stanza c'è il tuo compagno di stanza, \+\+McLovin\+\+. 
 
-* **look letto**: sotto il letto hai trovato un \*\*telefono\*\* e delle \*\*monete\*\*
+* **look letto**: sotto il letto hai trovato un \*\*telefono\*\* e delle \*\*monete1\*\*
 
     * telefono: Puoi usare il telefono per chiamare il secondino corrotto, client aggiuntivo, se il client non si è connesso non risponde nessuno al telefono. Altrimenti se è presente risponde il client aggiuntivo chiedendo un numero di monete
         
@@ -68,7 +68,7 @@ Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\
 
         Costruire una bomba è molto facile, hai provato con il t*** e il s***?
 
-* **look scaffale**: nello scaffale c'è una \*\*scatola\*\* e delle \*\*monete\*\*.
+* **look scaffale**: nello scaffale c'è una \*\*scatola\*\* e delle \*\*monete2\*\*.
 
     * look scatola: La scatola è bloccata da un lucchetto. Il codice del lucchetto è il continuo di questa sequenza
         11
@@ -76,7 +76,7 @@ Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\
         1211
         111221
 
-        dentoro la scatola c'è del \*\*sapone\*\* e altre \*\*monete\*\*.
+        dentoro la scatola c'è del \*\*sapone\*\* e altre \*\*monete3\*\*.
 
         * sapone
 
@@ -90,7 +90,6 @@ Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\
 
                 * use bomba sbarre (o use sbarre bomba): Complimenti sei riuscito ad evadere!
 
-
     * monete
 
         * look monete: Sono delle monete d'oro.
@@ -98,7 +97,6 @@ Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\
         * use monete: Le monete non si possono usare da sole.
 
         * take monete  
-
 
 * **look finestra**: la finestra ha le \*\*sbarre\*\*.
 
@@ -109,6 +107,8 @@ Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\
 #### Client aggiuntivo
 
 Il client aggiuntivo è un secondo partecipante alla escape room che ha il ruolo di secondino corrotto. Ti fa uscire se hai abbastanza soldi, può decidere quanto costa l'uscita da un minimo di 1 e max di 3.
+
+IL client aggiuntivo può decidere a quale sessione può collegarsi
 
 #### Soluzioni Enigmi
 
