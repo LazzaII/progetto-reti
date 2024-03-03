@@ -31,6 +31,7 @@ make
 * use *object* [*object*] 
 * objs 
 * end
+* stop (Solo per il server)
 
 ## Tema
 
@@ -42,7 +43,7 @@ Dopo aver fatto il login e aver scelto questo scenario si è davanti ad una scel
 
 #### Prigioniero
 
-Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\+\+ e una \+\+finestra\+\+. Mentre dall'altro lato della stanza c'è il tuo compagno di stanza, \+\+McLovin\+\+. 
+Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\+\+ e una \+\+finestra\+\+. Mentre dall'altro lato della stanza c'è il tuo compagno di stanza, \*\*McLovin\*\*. 
 
 * **look letto**: sotto il letto hai trovato un \*\*telefono\*\* e delle \*\*monete1\*\*
 
@@ -50,53 +51,61 @@ Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\
         
         * look telefono: Sul numero di telefono è salvato un solo numero.
 
-        * use telefono: Chiamo il numero salvato. Biiiip. Biiiip. 
+        * use telefono: Chiamo il numero salvato. Biiiip. Biiiip. (Qui il gioco cambia a seconda della presenza del secondino corrotto)
 
         * take telefono                        
 
-    * monete
+    * monete1
 
-        * look monete: Sono delle monete d'oro.
+        * look monete1: Sono delle monete d'oro.
 
-        * use monete: Le monete non si possono usare da sole.
+        * use monete1: É uscita testa
 
-        * take monete    
+        * take monete1   
 
 * **look McLovin**: McLovin è un ex chimico, forse può esserti utile. Però ti aiuterà solo a patto di rispondere ad un indovinello.
 
     * Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono? 
 
-        Costruire una bomba è molto facile, hai provato con il t*** e il s***?
+        Costruire una bomba è molto facile, hai provato con il t----on- il s--o--?
 
 * **look scaffale**: nello scaffale c'è una \*\*scatola\*\* e delle \*\*monete2\*\*.
 
-    * look scatola: La scatola è bloccata da un lucchetto. Il codice del lucchetto è il continuo di questa sequenza
+    * look scatola: La scatola è bloccata da un lucchetto a codice. (use scatola) Il codice del lucchetto è il continuo di questa sequenza
         11
         21
         1211
         111221
 
-        dentoro la scatola c'è del \*\*sapone\*\* e altre \*\*monete3\*\*.
+        dentro la scatola c'è del \*\*sapone\*\* e altre \*\*monete3\*\*.
 
         * sapone
 
             * use sapone: Ancora non è il momento di lavarsi.
 
-            * take sapone 
+            * take sapone (implicito)
 
             * use sapone telefono (o use telefono sapone): Hai smontato il telefono è hai preso la batteria. Tramite la batteria e il sapone hai costruito una \*\*bomba\*\*
 
-                * take bomba
+                * take bomba (implicito)
 
                 * use bomba sbarre (o use sbarre bomba): Complimenti sei riuscito ad evadere!
 
-    * monete
+        * monete3
 
-        * look monete: Sono delle monete d'oro.
+            * look monete3: Sono delle monete d'oro.
 
-        * use monete: Le monete non si possono usare da sole.
+            * use monete3: É uscita croce.
 
-        * take monete  
+            * take monete3 (implicito)
+
+    * monete2
+
+        * look monete2: Sono delle monete d'oro.
+
+        * use monete2: É uscita croce.
+
+        * take monete2
 
 * **look finestra**: la finestra ha le \*\*sbarre\*\*.
 
@@ -112,7 +121,7 @@ IL client aggiuntivo può decidere a quale sessione può collegarsi
 
 #### Soluzioni Enigmi
 
-1. Quiz di McLovin: tempo di Anna.
+1. Quiz di McLovin: Tempo di Anna.
 
 2. Lucchetto: 312211
 
