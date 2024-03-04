@@ -1,14 +1,26 @@
-#include "structure.c"
+#include <stdio.h>
 #include "utils.h"
 
 // ---------------------------
-// ENUM
+// Tipi utili
 // ---------------------------
 
 /**
  * Enumeratore per creare il boleano
 */
 typedef enum { false, true } bool;
+
+/**
+ * Struttura per i messaggi
+*/
+struct mex
+{
+    char* command;
+    char* opt1;
+    char* opt2;
+
+    bool ok; // se false troppi parametri
+};
 
 // ---------------------------
 // FUNZIONI
@@ -19,12 +31,19 @@ typedef enum { false, true } bool;
  * @param char* message inviato da terminale
  * @return message struttura contenente la suddivisione
 */
-struct message substringMessage(char* message) {
+struct mex substringMessage(char* message) {
     struct mex mex;
 
-    mex.command = strtok(buffer, " ");
+    mex.command = strtok(message, " ");
     mex.opt1 = strtok(NULL, " ");
     mex.opt2 = strtok(NULL, " ");
 
-    return mex;
+    if(strtok(NULL, " ") == NULL) { // numero di parametri giusto
+        mex.ok = true;
+        return mex;
+    }
+    else { // troppi parametri, per come è progettato il formato dei messaggi al massimo ci possono esere 1 comando e 2 opzioni
+        mex.ok = false;
+        return mex;
+    }
 }

@@ -1,3 +1,6 @@
+#ifndef STRUCTURE_C
+#define STRUCTURE_C
+
 #include "utils.c"
 #include <time.h>
 
@@ -26,10 +29,15 @@ struct session
     int id; // utile per l'associazione con il client aggiuntivo
     struct set set; // scenario scelto
     time_t time; // tempo per lo scenario
-    int main_player; // client
-    int secondary_player; // client aggiuntivo
+    int sc_main; // client principale
+    struct user* main; 
+    int sc_secondary; // client aggiuntivo
+    struct user* secondary;
 
     int token_pickedUp; // numero di token raccolti
+
+    // lista delle sessioni
+    struct session* next;
 };
 
 /**
@@ -92,16 +100,6 @@ struct riddle
 };
 
 /**
- * Struttura per i messaggi
-*/
-struct mex
-{
-    char* command;
-    char* opt1;
-    char* opt2;
-}
-
-/**
  * TOKEN ASSEGNATI
  * sol 1
  * - telefono
@@ -114,3 +112,5 @@ struct mex
  * - monete3
  * (Dipende da quante ne chiede il client aggiuntivo)
 */
+
+#endif

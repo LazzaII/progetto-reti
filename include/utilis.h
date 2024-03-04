@@ -1,1 +1,0 @@
-struct mex substringMessage(char* message);

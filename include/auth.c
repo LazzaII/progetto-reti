@@ -43,17 +43,15 @@ struct user* createUser(char* username, char* pwd) {
 
 /**
  * Funzione per autenticare un utente
+ * @param char* username utente che sta facendo il login
+ * @param pwd* password che sta inserendo per loggarsi
+ * @return bool true se ok, false altrimenti (non trovato o pwd sbagliata)
 */
 bool login(char* username, char* pwd) {
-    struct user* u, *toAdd;
-    for (u = users_list; u->next; u = u->next)
-    {
-        if(strcmp(username, u->username) == 0)
-            break;           
-    }
+    struct user* u = findUser(username);
 
-    // si controlla se siamo arrivati a fine del for o se abbiamo trovato l'utente
-    if(u->next) {
+    // si controlla se abbiamo trovato l'utente
+    if(u != NULL) {
         if(strcmp(pwd, u->password) == 0) {
             if(u->logged == false) {
                u->logged = true;
@@ -61,10 +59,55 @@ bool login(char* username, char* pwd) {
             }
             else return false; // utente già loggato in un'altra sessione
         }
-        else return false // password sbagliata
+        else return false; // password sbagliata
     }
     else {
         return false; // utente non trovato
     }
+}
 
+/**
+ * Funzione per eseguire la registrazione dell'utente.
+ * @param char* username utente che sta facendo la registrazione
+ * @param pwd* password che sta inserendo per registrarsi
+ * @return bool true se ok, false altrimenti (utente già inserito, pwd vuota)
+*/
+bool signup(char* username, char* pwd) {
+    struct user* u = findUser(username);
+
+    // si controlla se esiste un utente già presente altrimenti lo si crea
+    if(u == NULL) {
+       u = createUser(username, pwd);
+       return true;
+    }
+    else {
+        return false; // utente già presente
+    }
+}
+
+/**
+ * Funzione per eseguire il logout dalla sessione di gioco
+ * @param user* utente su cui eseguire il logout
+ * @param session* lista delle sessioni
+*/
+void logout(struct user* user, struct session* sessions) {
+    struct session* current, * prec;
+
+    // se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client
+    for (current = sessions; current->next; current = current->next)
+    {
+        if(strcmp(current->main->username, user->username)) {
+            // invia al socket del client aggiuntivo la terminazione della chiamata
+            // TODO
+
+            // elimina la sessione corrente
+            prec->next = current->next;
+            free(current);
+            break;
+        }
+        prec = current;
+    }
+
+    // client (main o aggiuntivo) messo offline
+    user->logged = false;
 }
