@@ -17,24 +17,32 @@ struct user
 };
 
 /**
- * Struttura per la sessione collegata ad uno scenario e un utente, più l'utente aggiuntivo
+ * Struttura per gli enigmi
 */
-struct session
+struct riddle 
 {
-    /* dati della sessione */
-    int id; /* utile per l'associazione con il client aggiuntivo */
-    struct set set; /* scenario scelto */
-    time_t time; /* tempo per lo scenario */
-    int sc_main; /* client principale */
-    struct user* main; 
-    int sc_secondary; /* client aggiuntivo */
-    struct user* secondary;
+    char* description;
+    char* solution;
+    bool solved;
+    char* mex_sol;
+};
 
-    int token_pickedUp; /* numero di token raccolti */
-    int secondary_token_pickedUp;
+/**
+ * Struttura per i vari oggetti
+*/
+struct object
+{
+    /* dati degli oggetti */
+    char* name;
+    char* description;
+    char* use_description;
 
-    /* lista delle sessioni */
-    struct session* next;
+    bool pickedUp;
+    bool used; /* se è stato utilizzato e non può essere più utilizzato (ex. use telefono sapone = bomba dopo non si può più usare telefono e sapone) */
+    bool found; /* se la location è stata scoperta, per evitare chiamate a caso senza "scoprire" la stanza */
+    bool is_token;
+
+    struct riddle* riddle; /* nel caso l'oggetto sia bloccato da un enigma */
 };
 
 /**
@@ -68,32 +76,24 @@ struct location
 };
 
 /**
- * Struttura per i vari oggetti
+ * Struttura per la sessione collegata ad uno scenario e un utente, più l'utente aggiuntivo
 */
-struct object
+struct session
 {
-    /* dati degli oggetti */
-    char* name;
-    char* description;
-    char* use_description;
+    /* dati della sessione */
+    int id; /* utile per l'associazione con il client aggiuntivo */
+    struct set set; /* scenario scelto */
+    time_t time; /* tempo per lo scenario */
+    int sc_main; /* client principale */
+    struct user* main; 
+    int sc_secondary; /* client aggiuntivo */
+    struct user* secondary;
 
-    bool pickedUp;
-    bool used; /* se è stato utilizzato e non può essere più utilizzato (ex. use telefono sapone = bomba dopo non si può più usare telefono e sapone) */
-    bool found; /* se la location è stata scoperta, per evitare chiamate a caso senza "scoprire" la stanza */
-    bool is_token;
+    int token_pickedUp; /* numero di token raccolti */
+    int secondary_token_pickedUp;
 
-    struct riddle* riddle; /* nel caso l'oggetto sia bloccato da un enigma */
-};
-
-/**
- * Struttura per gli enigmi
-*/
-struct riddle 
-{
-    char* description;
-    char* solution;
-    bool solved;
-    char* mex_sol;
+    /* lista delle sessioni */
+    struct session* next;
 };
 
 /**

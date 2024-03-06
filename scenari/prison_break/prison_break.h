@@ -1,7 +1,7 @@
 #ifndef PRISONBREAK_C
 #define PRISONBREAK_C
 
-#include "../../include/structure.c"
+#include "../../include/structure.h"
 
 #define DIM_RIDDLES_PB 10
 #define DIM_OBJECTS_PB 9

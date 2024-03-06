@@ -28,18 +28,18 @@ int main(int argc, char *argv[])
     /* ------------------------------------
         Avvio e inizializzazione del server 
        ------------------------------------ */ 
-    printf("! Avvio e inizializzazione del server in corso...\n");
+    printf("! Avvio e inizializzazione del server in corso...\n\n");
 
     listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
     if(listeningSocket < 0) {
-        perror("ERR: Errore nella creazione del socket");
+        perror("ERR: Errore nella creazione del socket\n");
         exit(1);
     }
 
     /* permette il riavvio del server instantanemente senza problemi di porta*/
     ret = setsockopt(listeningSocket, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
     if(ret < 0) {
-        perror("ERR: Errore in setsockopt(...)");
+        perror("ERR: Errore in setsockopt(...)\n");
         exit(1);
     }
 
@@ -50,16 +50,16 @@ int main(int argc, char *argv[])
 
     ret = bind(listeningSocket, (struct sockaddr*)&sv_addr, sizeof(sv_addr));
     if(ret < 0) {
-        perror("ERR: Errore bind");
+        perror("ERR: Errore bind\n");
         exit(1);
     }
 
     ret = listen(listeningSocket, 10);
     if(ret < 0) {
-        perror("ERR: Errore Listen");
+        perror("ERR: Errore Listen\n");
         exit(1);
     }
-    printf("OK: Socket di ascolto creato. fd: %d\n", listeningSocket);
+    printf("OK: Socket di ascolto creato. fd: %d\n\n", listeningSocket);
 
     FD_ZERO(&master);
     FD_ZERO(&readFds);
