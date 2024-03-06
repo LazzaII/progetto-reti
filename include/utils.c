@@ -18,7 +18,7 @@ struct mex
     char* opt1;
     char* opt2;
 
-    bool ok; // se false troppi parametri
+    bool ok; /* se false troppi parametri */
 };
 
 /* ---------------------------
@@ -37,11 +37,11 @@ struct mex substringMessage(char* message) {
     mex.opt1 = strtok(NULL, " ");
     mex.opt2 = strtok(NULL, " ");
 
-    if(strtok(NULL, " ") == NULL) { // numero di parametri giusto
+    if(strtok(NULL, " ") == NULL) { /* numero di parametri giusto */
         mex.ok = true;
         return mex;
     }
-    else { // troppi parametri, per come è progettato il formato dei messaggi al massimo ci possono esere 1 comando e 2 opzioni
+    else { /* troppi parametri, per come è progettato il formato dei messaggi al massimo ci possono esere 1 comando e 2 opzioni */
         mex.ok = false;
         return mex;
     }

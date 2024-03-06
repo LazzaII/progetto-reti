@@ -1,6 +1,6 @@
 #include "auth.h"
 
-// Variabili globali
+/* Variabili globali */
 struct user* users_list = NULL;
 
 /**
@@ -31,7 +31,7 @@ struct user* createUser(char* username, char* pwd) {
         if(strcmp(username, u->username) == 0)
             return NULL;
     }
-    // se non viene trovato si valorizza la nuova struttura
+    /* se non viene trovato si valorizza la nuova struttura */
     toAdd->username = username;
     toAdd->password = pwd;
     u->next = toAdd;
@@ -47,19 +47,19 @@ struct user* createUser(char* username, char* pwd) {
 bool login(char* username, char* pwd) {
     struct user* u = findUser(username);
 
-    // si controlla se abbiamo trovato l'utente
+    /* si controlla se abbiamo trovato l'utente */
     if(u != NULL) {
         if(strcmp(pwd, u->password) == 0) {
             if(u->logged == false) {
                u->logged = true;
                return true; 
             }
-            else return false; // utente già loggato in un'altra sessione
+            else return false; /* utente già loggato in un'altra sessione */
         }
-        else return false; // password sbagliata
+        else return false; /* password sbagliata */
     }
     else {
-        return false; // utente non trovato
+        return false; /* utente non trovato */
     }
 }
 
@@ -72,13 +72,13 @@ bool login(char* username, char* pwd) {
 bool signup(char* username, char* pwd) {
     struct user* u = findUser(username);
 
-    // si controlla se esiste un utente già presente altrimenti lo si crea
+    /* si controlla se esiste un utente già presente altrimenti lo si crea */
     if(u == NULL) {
        u = createUser(username, pwd);
        return true;
     }
     else {
-        return false; // utente già presente
+        return false; /* utente già presente */
     }
 }
 
@@ -89,14 +89,14 @@ bool signup(char* username, char* pwd) {
 void logout(struct user* user) {
     struct session* current, * prec;
 
-    // se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client
+    /* se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client */
     for (current = sessions; current->next; current = current->next)
     {
         if(strcmp(current->main->username, user->username)) {
-            // invia al socket del client aggiuntivo la terminazione della chiamata
-            // TODO
+            /* invia al socket del client aggiuntivo la terminazione della chiamata */
+            /* TODO */
 
-            // elimina la sessione corrente
+            /* elimina la sessione corrente */
             prec->next = current->next;
             free(current);
             break;
@@ -104,6 +104,6 @@ void logout(struct user* user) {
         prec = current;
     }
 
-    // client (main o aggiuntivo) messo offline
+    /* client (main o aggiuntivo) messo offline */
     user->logged = false;
 }

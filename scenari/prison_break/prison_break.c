@@ -5,7 +5,7 @@
 struct riddle riddles[DIM_RIDDLES_PB] = {
     {
         "Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono?",
-        "Tempo di Anna", // soluzione
+        "Tempo di Anna", /* soluzione */
         0,
         "Costruire una bomba è molto facile, hai provato con il t----on- il s--o--?"
     },
@@ -15,14 +15,14 @@ struct riddle riddles[DIM_RIDDLES_PB] = {
         "21\n"
         "1211\n"
         "111221\n",
-        "312211", // soluzione
+        "312211", /* soluzione */
         0,
         "Dentro la scatola c'è del **sapone** e altre **monete3**."
     },
 };
 
 struct object objects[DIM_OBJECTS_PB] = {
-    { // 0
+    { /* 0 */
         "McLovin",
         "McLovin è un ex chimico, forse può esserti utile.",
         "Vuoi provare a scappare? Va bene, ti aiuterò solo a patto di rispondermi ad un indovinello.",
@@ -32,7 +32,7 @@ struct object objects[DIM_OBJECTS_PB] = {
         0,
         &riddles[0]
     },
-    { // 1
+    { /* 1 */
         "telefono",
         "Sul numero di telefono è salvato un solo numero.",
         "Chiamo il numero salvato. Biiiip. Biiiip.",
@@ -42,7 +42,7 @@ struct object objects[DIM_OBJECTS_PB] = {
         0,
         NULL
     },
-    { // 2
+    { /* 2 */
         "monete1",
         "Sono delle monete d'oro.",
         "É uscita testa.",
@@ -52,7 +52,7 @@ struct object objects[DIM_OBJECTS_PB] = {
         0,
         NULL
     },
-    { // 3
+    { /* 3 */
         "scatola",
         "La scatola sembra chiusa.",
         "É bloccata da un lucchetto a sono 6 cifre.",
@@ -62,7 +62,7 @@ struct object objects[DIM_OBJECTS_PB] = {
         0,
         &riddles[1]
     },
-    { // 4
+    { /* 4 */
         "monete2",
         "Sono delle monete d'oro.",
         "É uscita croce.",
@@ -72,7 +72,7 @@ struct object objects[DIM_OBJECTS_PB] = {
         0,
         NULL
     },
-    { // 5
+    { /* 5 */
         "sapone",
         "Bagnodoccia Vidal, tutto in uno!",
         "Ancora non è il momento di lavarsi.",
@@ -82,7 +82,7 @@ struct object objects[DIM_OBJECTS_PB] = {
         0,
         NULL
     },
-    { // 6
+    { /* 6 */
         "monete3",
         "Sono delle monete d'oro.",
         "É uscita croce.",
@@ -92,7 +92,7 @@ struct object objects[DIM_OBJECTS_PB] = {
         0,
         NULL
     },
-    { // 7
+    { /* 7 */
         "sbarre",
         "Non sembrano così resistenti...",
         "Non sono resistenti ma provare ad aprirle a mano è troppo forse.",
@@ -102,7 +102,7 @@ struct object objects[DIM_OBJECTS_PB] = {
         0,
         NULL
     },
-    { // 8
+    { /* 8 */
         "bomba",
         "Guarda cosa si può fare con del semplice sapone e delle batterie.",
         "Sei folle?! Così ci farai saltare tutti in aria!",
