@@ -85,9 +85,8 @@ bool signup(char* username, char* pwd) {
 /**
  * Funzione per eseguire il logout dalla sessione di gioco
  * @param user* utente su cui eseguire il logout
- * @param session* lista delle sessioni
 */
-void logout(struct user* user, struct session* sessions) {
+void logout(struct user* user) {
     struct session* current, * prec;
 
     // se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client

@@ -18,7 +18,6 @@
 
 int main(int argc, char *argv[])
 {
-    struct session* sessions; 
     int nSocket, fdMax, ret, i, listeningSocket, comm_sock, sock_giocatore;
     fd_set  master, readFds;
     socklen_t addrlen;
