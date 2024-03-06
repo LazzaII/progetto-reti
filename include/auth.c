@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include "structure.c"
-#include "utils.h"
+#include "auth.h"
 
 // Variabili globali
 struct user* users_list = NULL;

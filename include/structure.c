@@ -1,22 +1,18 @@
-#ifndef STRUCTURE_C
-#define STRUCTURE_C
-
-#include "utils.c"
-#include <time.h>
+#include "structure.h"
 
 /**
  * Struttura degli utenti
 */
 struct user
 {
-    // dati utente
+    /* dati utente */
     char* username;
     char* password;
 
-    // dati per la sessione
+    /* dati per la sessione */
     bool logged;
 
-    // lista utenti
+    /* lista utenti */
     struct user* next;
 };
 
@@ -25,18 +21,19 @@ struct user
 */
 struct session
 {
-    // dati della sessione 
-    int id; // utile per l'associazione con il client aggiuntivo
-    struct set set; // scenario scelto
-    time_t time; // tempo per lo scenario
-    int sc_main; // client principale
+    /* dati della sessione */
+    int id; /* utile per l'associazione con il client aggiuntivo */
+    struct set set; /* scenario scelto */
+    time_t time; /* tempo per lo scenario */
+    int sc_main; /* client principale */
     struct user* main; 
-    int sc_secondary; // client aggiuntivo
+    int sc_secondary; /* client aggiuntivo */
     struct user* secondary;
 
-    int token_pickedUp; // numero di token raccolti
+    int token_pickedUp; /* numero di token raccolti */
+    int secondary_token_pickedUp;
 
-    // lista delle sessioni
+    /* lista delle sessioni */
     struct session* next;
 };
 
@@ -45,15 +42,15 @@ struct session
 */
 struct set 
 {
-    // dati dello scenario
-    int id; // codice da digitare da parte del client
+    /* dati dello scenario */
+    int id; /* codice da digitare da parte del client */
     char* name;
     char* description;
 
-    // location dello scenario
+    /* location dello scenario */
     struct location* locations;
 
-    // oggetti dello scenario su cui si può fare subito take subito
+    /* oggetti dello scenario su cui si può fare subito take subito */
     struct object* objs;
 };
 
@@ -62,11 +59,11 @@ struct set
 */
 struct location
 {
-    // dati della location
+    /* dati della location */
     char* name;
     char* description;
 
-    // oggetti della location
+    /* oggetti della location */
     struct object** objs;
 };
 
@@ -75,17 +72,17 @@ struct location
 */
 struct object
 {
-    // dati degli oggetti
+    /* dati degli oggetti */
     char* name;
     char* description;
     char* use_description;
 
     bool pickedUp;
-    bool used; // se è stato utilizzato e non può essere più utilizzato (ex. use telefono sapone = bomba dopo non si può più usare telefono e sapone)
-    bool found; // se la location è stata scoperta, per evitare chiamate a caso senza "scoprire" la stanza
+    bool used; /* se è stato utilizzato e non può essere più utilizzato (ex. use telefono sapone = bomba dopo non si può più usare telefono e sapone) */
+    bool found; /* se la location è stata scoperta, per evitare chiamate a caso senza "scoprire" la stanza */
     bool is_token;
 
-    struct riddle* riddle; // nel caso l'oggetto sia bloccato da un enigma
+    struct riddle* riddle; /* nel caso l'oggetto sia bloccato da un enigma */
 };
 
 /**
@@ -101,16 +98,14 @@ struct riddle
 
 /**
  * TOKEN ASSEGNATI
- * sol 1
+ * sol 1 (principale)
  * - telefono
  * - sapone
  * - bomba (da tel e sapone)
  * 
- * sol 2 
+ * sol 2 (secondaria)
  * - monete1 
  * - monete2
  * - monete3
  * (Dipende da quante ne chiede il client aggiuntivo)
 */
-
-#endif

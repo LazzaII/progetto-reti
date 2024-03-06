@@ -1,9 +1,8 @@
-#include <stdio.h>
 #include "utils.h"
 
-// ---------------------------
-// Tipi utili
-// ---------------------------
+/* ---------------------------
+    Tipi utili
+  --------------------------- */
 
 /**
  * Enumeratore per creare il boleano
@@ -22,9 +21,9 @@ struct mex
     bool ok; // se false troppi parametri
 };
 
-// ---------------------------
-// FUNZIONI
-// ---------------------------
+/* ---------------------------
+    Funzioni
+  --------------------------- */
 
 /**
  * Funzione per suddividere il messaggio in comando, opzione1 e opzione2
@@ -46,4 +45,24 @@ struct mex substringMessage(char* message) {
         mex.ok = false;
         return mex;
     }
+}
+
+/**
+ * Funzione per rendere il tempo corrente
+ * @return time_t timestamp corrente
+*/
+time_t getCurrentTime() {
+    return time(NULL);
+}
+
+/**
+ * Funzione per rendere il tempo rimanente, controlla anche che il tempo sia scaduto, in quel caso rende -1
+ * @param time_t time il tempo da cui controllare che sia scaduto
+ * @return intero contenente il valore del tempo rimanente, -1 se si è superato il tempo massimo
+*/
+int remainingTime(time_t startTime) {
+    time_t current = time(NULL);
+    int p = (int) difftime(current, startTime);
+
+    return p < MAX_TIME ? p : -1;
 }
