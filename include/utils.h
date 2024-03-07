@@ -7,6 +7,7 @@
 #include "structure.h"
 
 #define MAX_TIME 480 /* tempo massimo in secondi */
+#define DIM_BUFFER 1024 /* grandezza buffer di client e server */
 
 /* Variabili globali */
 extern struct user* users_list = NULL;

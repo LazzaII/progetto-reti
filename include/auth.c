@@ -65,7 +65,7 @@ struct session* getSession(int socket, char* type)
  * @param pwd* password che sta inserendo per loggarsi
  * @return bool true se ok, false altrimenti (non trovato o pwd sbagliata)
 */
-bool login(char* username, char* pwd) 
+bool login(char* username, char* pwd, char* err_buffer) 
 {
     struct user* u = findUser(username);
 
@@ -76,12 +76,22 @@ bool login(char* username, char* pwd)
                u->logged = true;
                return true; 
             }
-            else return false; /* utente già loggato in un'altra sessione */
+            else {
+                /* utente già loggato in un'altra sessione */
+                err_buffer = "Utente già loggato.";
+                return false;
+            } 
         }
-        else return false; /* password sbagliata */
+        else {
+            /* password sbagliata */
+            err_buffer = "Password sbagliata.";
+            return false;  
+        }
     }
     else {
-        return false; /* utente non trovato */
+        /* utente non trovato */
+        err_buffer = "Utente non trovato.";
+        return false; 
     }
 }
 
@@ -117,12 +127,8 @@ void logout(struct user* user)
     for (current = sessions; current->next; current = current->next)
     {
         if(strcmp(current->main->username, user->username)) {
-            /* invia al socket del client aggiuntivo la terminazione della chiamata */
-            /* TODO */
-
-            /* elimina la sessione corrente */
+            /* elimina la sessione corrente (in maniera logica cioè viene solo tolta dalla lista) */
             prec->next = current->next;
-            free(current);
             break;
         }
         prec = current;

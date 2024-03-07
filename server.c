@@ -14,7 +14,6 @@
 #include "include/utils.h"
 #include "scenari/prison_break/prison_break.h"
 
-#define DIM_BUFFER 1024
 
 int main(int argc, char *argv[])
 {
@@ -113,12 +112,9 @@ int main(int argc, char *argv[])
 
                     /* invio al client i comandi e scenari disponibili */
                     memset(buffer, 0, sizeof(buffer));
-                    // commandList(buffer);
+                    setList(buffer);
                     send(i, buffer, DIM_BUFFER, 0); 
-                    // invia_messaggio(communication_socket, buffer, "Errore invio comandi\n");
-                    // prendi_scenari(buffer);
-                    // invia_messaggio(communication_socket, buffer, "Errore invio scenari\n");
-                    // printf("Scenari e comandi disponibili inviati.\n\n");
+                    printf("Invio risposta: scenari disponibili inviati al client.\n\n");
 
                     FD_SET(communication_socket, &master);
                     if(communication_socket > fdmax) {
@@ -129,9 +125,9 @@ int main(int argc, char *argv[])
                 else {
                     char* type = NULL; 
                     ret = recv(i, (void*)buffer, DIM_BUFFER, 0);
-                    struct session* current_session = getSession(i, type);
+                    struct session* current_session = getSession(i, type); /* potrebbe returnane NULL se non trova niente (login, signup)*/
 
-                    /* chiusura anticipiata client */
+                    /* TODO: chiusura anticipiata client */ 
                     if(ret == 0) {
                         // printf("Sconnessione socket %d in corso...\n", i);
                         // printf("%s", logout_user(i));
@@ -165,7 +161,7 @@ int main(int argc, char *argv[])
                           "Socket: %d\n"
                           "******************************************************\n\n"
                           ,buffer, current_session->id , current_session->set.name, strcmp(type, "MAIN") ? current_session->main->username : current_session->secondary->username, i);
-                    commandSwitcher(i, buffer, type);
+                    commandSwitcher(i, buffer, type, current_session, &master);
                 }
             }
         } 

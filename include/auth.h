@@ -13,7 +13,7 @@ void createUser(char* username, char* pwd);
 struct session* getSession(int socket, char* type);
 
 /* Autenticazione  */
-bool login(char* username, char* pwd);
+bool login(char* username, char* pwd, char* err_buffer);
 bool signup(char* username, char* pwd);
 void logout(struct user* user);
 

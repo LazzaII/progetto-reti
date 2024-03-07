@@ -1,6 +1,7 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include <sys/types.h>
 #include <stdio.h>
 #include "utils.h"
 
@@ -8,25 +9,25 @@ void setList(char* buffer);
 void commandList(char* buffer);
 void typeList(char* buffer);
 void sessionList(char* buffer);
-void commandSwitcher(int socket, char* message, char* type);
+void commandSwitcher(int socket, char* message, char* type, struct session* current_session, fd_set* master);
 
 bool signupHandler(char* username, char* pwd); /* registrazione */
-bool loginHandler(char* username, char* pwd); /* login */
-bool endHandler(char* username); /* logout */
+bool loginHandler(char* username, char* pwd, char* err_buffer); /* login */
+void endHandler(struct session* current_session, char* type, fd_set* master); /* logout */
 
-bool stopHandler(int nSocket); /* chiusura del server */
+void stopHandler(int nSocket); /* chiusura del server */ /* Non dovrebbe servire */
 
-bool startHandler(char* opt);
+void startHandler(char* opt);
 
 /*  comando choose bivalente
     primo significato: all'inizio serve per scegliere che tipo di giocatore si vuole essere
     secondo significato: se si sceglie il personaggio secondario fa scegliere in quale partita entrare */
-bool chooseHandler(char* opt1, char* opt2); 
+void chooseHandler(char* opt1, char* opt2); 
 
-bool lookHandler(char* opt); /* opt può essere null nel caso dello scenario, altrimenti può essere una location o un oggeto */
-bool takeHandler(char* obj);
-bool useHandler(char* obj1, char* obj2);
-bool objsHandler();
+void lookHandler(char* opt); /* opt può essere null nel caso dello scenario, altrimenti può essere una location o un oggeto */
+void takeHandler(char* obj);
+void useHandler(char* obj1, char* obj2);
+void objsHandler();
 
 #endif
 

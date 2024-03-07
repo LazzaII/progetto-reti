@@ -3,6 +3,7 @@
         "*.embeddedhtml": "html",
         "utils.h": "c",
         "prison_break.h": "c",
-        "auth.h": "c"
+        "auth.h": "c",
+        "in.h": "c"
     }
 }

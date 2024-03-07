@@ -114,6 +114,13 @@ struct session
     int token_pickedUp; /* numero di token raccolti */
     int secondary_token_pickedUp;
 
+    /* var per quando si sta aspettando risposta da un indovinello*/
+    bool active_riddle;
+    int pos_riddle;
+
+    /* var per quando si è usato il telefono e si sta aspettando l'altro giocatore */
+    bool active_call;
+
     /* lista delle sessioni */
     struct session* next;
 };
