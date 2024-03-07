@@ -7,13 +7,14 @@
 #include "utils.h"
 
 
-/* Global var */
+/* Var globali */
 extern struct user* users_list;
 extern struct session* sessions;
 
 /* Utility */
 struct user* findUser(char* username);
 struct user* createUser(char* username, char* pwd);
+struct session* getSession(int socket, char* type);
 
 /* Autenticazione  */
 bool login(char* username, char* pwd);

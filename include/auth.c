@@ -2,13 +2,15 @@
 
 /* Variabili globali */
 struct user* users_list = NULL;
+struct session* sessions = NULL;
 
 /**
  * Funzione per cercare se un utente è presente nella lista degli utenti registrati
  * @param char* username nome dell'utente da cercare
  * @return user* | NULL struttura dell'utente trovato oppure NULL se non è presente
 */
-struct user* findUser(char* username) {
+struct user* findUser(char* username) 
+{
     struct user* u;
     for (u = users_list; u->next; u = u->next)
     {
@@ -24,7 +26,8 @@ struct user* findUser(char* username) {
  * @param char* pwd password dell'utente da aggiungere
  * @return user* | NULL struttura appena creata oppure NULL se già presente
 */
-struct user* createUser(char* username, char* pwd) {
+struct user* createUser(char* username, char* pwd) 
+{
     struct user* u, *toAdd;
     for (u = users_list; u->next; u = u->next)
     {
@@ -39,12 +42,37 @@ struct user* createUser(char* username, char* pwd) {
 }
 
 /**
+ * Funzione per trovare la sessione associata ad un socket
+ * @param int socket di cui si vuole trovare la sessione associata
+
+*/
+struct session* getSession(int socket, char* type)
+{
+    struct session* tmp;
+
+    for (tmp = sessions; tmp->next; tmp = tmp->next)
+    {
+        if(tmp->sc_main = socket){ /* giocatore principale */
+            strcpy(type, "MAIN");
+            break;
+        }
+        if(tmp->sc_secondary = socket){ /* giocatore secondario */
+            strcpy(type, "SEC");
+            break;
+        }
+    }
+
+    return tmp;
+}
+
+/**
  * Funzione per autenticare un utente
  * @param char* username utente che sta facendo il login
  * @param pwd* password che sta inserendo per loggarsi
  * @return bool true se ok, false altrimenti (non trovato o pwd sbagliata)
 */
-bool login(char* username, char* pwd) {
+bool login(char* username, char* pwd) 
+{
     struct user* u = findUser(username);
 
     /* si controlla se abbiamo trovato l'utente */
@@ -69,7 +97,8 @@ bool login(char* username, char* pwd) {
  * @param pwd* password che sta inserendo per registrarsi
  * @return bool true se ok, false altrimenti (utente già inserito, pwd vuota)
 */
-bool signup(char* username, char* pwd) {
+bool signup(char* username, char* pwd) 
+{
     struct user* u = findUser(username);
 
     /* si controlla se esiste un utente già presente altrimenti lo si crea */
@@ -86,7 +115,8 @@ bool signup(char* username, char* pwd) {
  * Funzione per eseguire il logout dalla sessione di gioco
  * @param user* utente su cui eseguire il logout
 */
-void logout(struct user* user) {
+void logout(struct user* user) 
+{
     struct session* current, * prec;
 
     /* se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client */
