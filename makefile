@@ -1,7 +1,7 @@
 all: server client other clean
 
-server: server.o utils.o structure.o auth.o command.o prison_break.o
-	gcc -Wall server.o utils.o structure.o auth.o command.o prison_break.o -o server 
+server: server.o utils.o auth.o command.o prison_break.o
+	gcc -Wall server.o utils.o auth.o command.o prison_break.o -o server 
 
 client: client.o utils.o 
 	gcc -Wall client.o -o client
@@ -12,16 +12,13 @@ other: client.o utils.o
 client.o: client.c
 	gcc -Wall -g -c -std=c89 client.c -o client.o
 
-server.o: server.c
+server.o: server.c include/structure.h include/auth.h include/command.h include/utils.h
 	gcc -Wall -g -c -std=c89 server.c -o server.o
 
-auth.o: include/auth.c include/auth.h
+auth.o: include/auth.c include/auth.h include/structure.h
 	gcc -Wall -g -c -std=c89 include/auth.c -o auth.o
 
-structure.o: include/structure.c include/structure.h 
-	gcc -Wall -g -c -std=c89 include/structure.c -o structure.o
-
-utils.o: include/utils.c include/utils.h
+utils.o: include/utils.c include/utils.h include/structure.h
 	gcc -Wall -g -c -std=c89 include/utils.c -o utils.o
 
 command.o: include/command.c include/command.h

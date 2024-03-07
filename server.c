@@ -104,17 +104,17 @@ int main(int argc, char *argv[])
                     communication_socket = accept(listening_socket, (struct sockaddr*)&cl_addr, &addrlen);
                     
                     if(communication_socket < 0) {
-                        perror("Errore in fase di accept");
+                        perror("ERR: Errore accept");
                         exit(1);
                     }
-                    printf("Nuovo client connesso, socket di comunicazione: %d\n", communication_socket);
+                    printf("******************************************************\n"
+                           "Nuovo client connesso, socket: %d\n"
+                           "******************************************************\n\n", communication_socket);
 
-                    /* invio al client degli scenari e comandi disponibili */
+                    /* invio al client i comandi e scenari disponibili */
                     memset(buffer, 0, sizeof(buffer));
-
-
-
-                    // comandi_client(buffer);
+                    // commandList(buffer);
+                    send(i, buffer, DIM_BUFFER, 0); 
                     // invia_messaggio(communication_socket, buffer, "Errore invio comandi\n");
                     // prendi_scenari(buffer);
                     // invia_messaggio(communication_socket, buffer, "Errore invio scenari\n");
@@ -127,10 +127,11 @@ int main(int argc, char *argv[])
                 }
                 /* Se non è nessuno dei socket precedenti è quello di comunicazione */
                 else {
-                    ret = ricevi_messaggio(i, buffer, "Errore ricezione comando dal client\n");
-                    char* type; 
+                    char* type = NULL; 
+                    ret = recv(i, (void*)buffer, DIM_BUFFER, 0);
                     struct session* current_session = getSession(i, type);
 
+                    /* chiusura anticipiata client */
                     if(ret == 0) {
                         // printf("Sconnessione socket %d in corso...\n", i);
                         // printf("%s", logout_user(i));
@@ -156,13 +157,13 @@ int main(int argc, char *argv[])
                         // continue;
                     }
 
-                    printf("****************\n"
+                    printf("******************************************************\n"
                           "Comando: %s\n"
                           "Sessione: %d\n"
                           "Scenario: %s\n"
                           "Utente: %s\n"
                           "Socket: %d\n"
-                          "****************\n\n"
+                          "******************************************************\n\n"
                           ,buffer, current_session->id , current_session->set.name, strcmp(type, "MAIN") ? current_session->main->username : current_session->secondary->username, i);
                     commandSwitcher(i, buffer, type);
                 }

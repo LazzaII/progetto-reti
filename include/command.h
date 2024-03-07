@@ -4,14 +4,10 @@
 #include <stdio.h>
 #include "utils.h"
 
-// lista dei comandi disponibili
-extern const char* COMMAND_LIST = "Lista dei comandi disponibili:"
-           "\t- look [loc | obj]: senza argomenti rende la descrizione dello scenario, altrimenti la descrizione dell'oggeto/location in questione.\n"
-           "\t- take obj: raccoglie l'oggetto <obj> indicato come parametro."
-           "\t- use obj1 [obj2]: permette di utilizzare l'oggeto <obj> indicato come parametro o di usarlo in maniera combinata con l'oggeto <obj2>."
-           "\t- objs: rende la lista degli oggetti raccolti."
-           "\t- end: termina la partita ed esce dal gioco.";
-
+void setList(char* buffer);
+void commandList(char* buffer);
+void typeList(char* buffer);
+void sessionList(char* buffer);
 void commandSwitcher(int socket, char* message, char* type);
 
 bool signupHandler(char* username, char* pwd); /* registrazione */
@@ -19,6 +15,8 @@ bool loginHandler(char* username, char* pwd); /* login */
 bool endHandler(char* username); /* logout */
 
 bool stopHandler(int nSocket); /* chiusura del server */
+
+bool startHandler(char* opt);
 
 /*  comando choose bivalente
     primo significato: all'inizio serve per scegliere che tipo di giocatore si vuole essere

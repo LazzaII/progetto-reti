@@ -1,5 +1,9 @@
 #include "utils.h"
 
+/* Variabili globali */
+struct user* users_list = NULL;
+struct session* sessions = NULL;
+
 /**
  * Funzione per suddividere il messaggio in comando, opzione1 e opzione2
  * @param char* message inviato da terminale

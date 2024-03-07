@@ -1,13 +1,11 @@
-#include <stdio.h>
 #include "prison_break.h"
-#include "../../include/structure.c"
 
 struct riddle riddles[DIM_RIDDLES_PB] = {
     {
         "Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono?",
         "Tempo di Anna", /* soluzione */
         0,
-        "Costruire una bomba è molto facile, hai provato con il t----on- il s--o--?"
+        "Costruire una bomba è molto facile, hai provato con il t----on- e il s--o--?"
     },
     {
         "Il codice del lucchetto è il continuo di questa sequenza.\n"

@@ -2,18 +2,14 @@
 #define AUTH_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "structure.c"
+#include "structure.h"
 #include "utils.h"
-
-
-/* Var globali */
-extern struct user* users_list;
-extern struct session* sessions;
 
 /* Utility */
 struct user* findUser(char* username);
-struct user* createUser(char* username, char* pwd);
+void createUser(char* username, char* pwd);
 struct session* getSession(int socket, char* type);
 
 /* Autenticazione  */

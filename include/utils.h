@@ -4,20 +4,13 @@
 #include <stdio.h>
 #include <time.h>
 #include "auth.h"
+#include "structure.h"
 
 #define MAX_TIME 480 /* tempo massimo in secondi */
 
-/* Tipi utili */
-typedef enum { false, true } bool;
-
-struct mex
-{
-    char* command;
-    char* opt1;
-    char* opt2;
-
-    bool ok; /* se false troppi parametri */
-};
+/* Variabili globali */
+extern struct user* users_list = NULL;
+extern struct session* sessions = NULL;
 
 /* Dichiarazione funzioni */
 struct mex substringMessage(char* message);

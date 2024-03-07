@@ -1,9 +1,5 @@
 #include "auth.h"
 
-/* Variabili globali */
-struct user* users_list = NULL;
-struct session* sessions = NULL;
-
 /**
  * Funzione per cercare se un utente è presente nella lista degli utenti registrati
  * @param char* username nome dell'utente da cercare
@@ -26,25 +22,23 @@ struct user* findUser(char* username)
  * @param char* pwd password dell'utente da aggiungere
  * @return user* | NULL struttura appena creata oppure NULL se già presente
 */
-struct user* createUser(char* username, char* pwd) 
+void createUser(char* username, char* pwd) 
 {
-    struct user* u, *toAdd;
-    for (u = users_list; u->next; u = u->next)
-    {
-        if(strcmp(username, u->username) == 0)
-            return NULL;
-    }
-    /* se non viene trovato si valorizza la nuova struttura */
-    toAdd->username = username;
-    toAdd->password = pwd;
-    u->next = toAdd;
-    return toAdd;
+    struct user* u = users_list;
+    /* si scorre tutta la lista per aggiugere il nuovo utente */
+    while (u->next) 
+        u = u->next;
+
+    u->next = malloc(sizeof(struct user));
+    u->next->username = username;
+    u->next->password = pwd;
+    u->next->next = NULL;
 }
 
 /**
  * Funzione per trovare la sessione associata ad un socket
  * @param int socket di cui si vuole trovare la sessione associata
-
+ * @param char* 
 */
 struct session* getSession(int socket, char* type)
 {
@@ -52,11 +46,11 @@ struct session* getSession(int socket, char* type)
 
     for (tmp = sessions; tmp->next; tmp = tmp->next)
     {
-        if(tmp->sc_main = socket){ /* giocatore principale */
+        if(tmp->sc_main == socket){ /* giocatore principale */
             strcpy(type, "MAIN");
             break;
         }
-        if(tmp->sc_secondary = socket){ /* giocatore secondario */
+        if(tmp->sc_secondary == socket){ /* giocatore secondario */
             strcpy(type, "SEC");
             break;
         }
@@ -103,7 +97,7 @@ bool signup(char* username, char* pwd)
 
     /* si controlla se esiste un utente già presente altrimenti lo si crea */
     if(u == NULL) {
-       u = createUser(username, pwd);
+       createUser(username, pwd);
        return true;
     }
     else {
