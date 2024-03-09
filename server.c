@@ -17,7 +17,7 @@
 
 int main(int argc, char *argv[])
 {
-    int fdmax, ret, i, listening_socket, communication_socket, player_socket;
+    int fdmax, ret, i, listening_socket, communication_socket;
     fd_set  master, readfds;
     socklen_t addrlen;
     struct sockaddr_in  sv_addr, cl_addr;
@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
 
     listening_socket = socket(AF_INET, SOCK_STREAM, 0);
     if(listening_socket < 0) {
-        perror("ERR: Errore nella creazione del socket\n");
+        perror("ERR: Errore nella creazione del socket - ");
         exit(1);
     }
 
     /* permette il riavvio del server instantanemente senza problemi di porta*/
     ret = setsockopt(listening_socket, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
     if(ret < 0) {
-        perror("ERR: Errore in setsockopt(...)\n");
+        perror("ERR: Errore in setsockopt(...) - ");
         exit(1);
     }
 
@@ -49,13 +49,13 @@ int main(int argc, char *argv[])
 
     ret = bind(listening_socket, (struct sockaddr*)&sv_addr, sizeof(sv_addr));
     if(ret < 0) {
-        perror("ERR: Errore bind\n");
+        perror("ERR: Errore bind - ");
         exit(1);
     }
 
     ret = listen(listening_socket, 10);
     if(ret < 0) {
-        perror("ERR: Errore Listen\n");
+        perror("ERR: Errore Listen - ");
         exit(1);
     }
     printf("OK: Socket di ascolto creato. fd: %d\n\n", listening_socket);
@@ -85,15 +85,21 @@ int main(int argc, char *argv[])
                 /* Controllo dello STDIN per ricezione comandi diretti al server */
                 if(i == STDIN_FILENO) {
                     scanf("%s", buffer);
+                    printf("\n******************************************************\n");
                     if(strcmp(buffer, "stop") != 0) {
-                        printf("WARN: Comando non riconosciuto.\n\n");
-                        continue;
-                    }
-                    if(gameOn()) {
-                        printf("WARN: Impossibile terminare il server, il gioco è in corso.\n\n");
+                        printf("WARN: Comando non riconosciuto.\n\n"
+                            "******************************************************\n");
                         continue;
                     }
                     printf("! Chiusura del server...\n\n");
+                    if(gameOn()) { /* se è presente una partita non termino */
+                        printf("WARN: Impossibile terminare il server, il gioco è in corso.\n"
+                                "******************************************************\n");
+                        continue;
+                    }
+                    deleteUsers(); /* basta eliminare gli utenti perchè se siamo arrivati qui le sessioni sono già state deallocate */
+                    printf("OK: Server chiuso correttamente\n"
+                            "******************************************************\n");
                     exit(0);
                 }
                 /* Controllo il socket di ascolto, addetto alle nuove connessioni*/
@@ -108,13 +114,14 @@ int main(int argc, char *argv[])
                     }
                     printf("******************************************************\n"
                            "Nuovo client connesso, socket: %d\n"
-                           "******************************************************\n\n", communication_socket);
+                           , communication_socket);
 
-                    /* invio al client i comandi e scenari disponibili */
+                    /* invio al client gli scenari disponibili */
                     memset(buffer, 0, sizeof(buffer));
                     setList(buffer);
                     send(i, buffer, DIM_BUFFER, 0); 
-                    printf("Invio risposta: scenari disponibili inviati al client.\n\n");
+                    printf("Risposta server: scenari disponibili inviati al client.\n"
+                           "******************************************************\n\n");
 
                     FD_SET(communication_socket, &master);
                     if(communication_socket > fdmax) {
@@ -127,30 +134,53 @@ int main(int argc, char *argv[])
                     ret = recv(i, (void*)buffer, DIM_BUFFER, 0);
                     struct session* current_session = getSession(i, type); /* potrebbe returnane NULL se non trova niente (login, signup)*/
 
-                    /* TODO: chiusura anticipiata client */ 
                     if(ret == 0) {
-                        /*printf("Sconnessione socket %d in corso...\n", i);
-                        printf("%s", logout_user(i));
+                        struct user* current_user;
+
+                        /* se il client ancora non è entrato in nessuna sessione */
+                        if(current_session == NULL) {
+                            printf("******************************************************\n"
+                              "! Sconnessione socket %d in corso...\n", i);
+                            close(i);
+                            printf("Socket %d chiuso.\n"
+                                    "Il socket non faceva parte di nessuna partita.", i);
+                            printf("SUCCES: Disconessione eseguita con successo\n"
+                                "******************************************************\n\n");
+                            continue;
+                        }
+
+                        /* 
+                            se invece il client faceva parte di una sessione si disconnette il socket e 
+                            si controlla il tipo di utente in modo da gestire la chiusura aggiuntiva del socket secondario.
+                        */
+                        current_user = strcmp(type, "MAIN") == 0 ? current_session->main : current_session->secondary;
+                        printf("******************************************************\n"
+                              "! Sconnessione socket %d in corso...\n"
+                              "! Eliminazione utente: %s", i, current_user->username);
+                        logout(current_user);
                         close(i);
                         printf("Socket %d chiuso.\n", i);
                         FD_CLR(i, &master);
                         printf("Socket %d rimosso dal set dei descrittori.\n"
-                               "Sconnessione client effettuata con successo.\n\n", i);
+                                "OK: Disconnessione client eseguita con successo.\n\n", i);
                                
-                        sconnetto anche l'altro giocatore se presente
-                        if((player_socket = prendi_altro_giocatore(i)) >= 0) {
-                            printf("Presente gruppo, disconnessione altro giocatore...");
-                            printf("%s", logout_user(player_socket));
-                            close(player_socket);
-                            printf("Socket %d chiuso.\n", player_socket);
-                            FD_CLR(player_socket, &master);
-                            printf("Socket %d rimosso dal set dei descrittori.\n"
-                                    "Sconnessione client effettuata con successo.\n\n", player_socket);
-                            printf("%s", elimina_gruppo());
+                        /* se il client è principale va disconnesso anche il client secondario*/
+                        if(strcmp(type, "MAIN") == 0) {
+                            printf("Disconessione altro giocatore..."
+                                    "! Sconnessione socket %d in corso...\n"
+                                    "! Eliminazione utente: %s", current_session->sc_secondary, current_session->secondary->username);
+                            close(current_session->sc_secondary);
+                            printf("OK: Socket %d chiuso.\n", current_session->sc_secondary);
+                            FD_CLR(current_session->sc_secondary, &master);
+                            printf("OK: Socket %d rimosso dal set dei descrittori.\n"
+                                    "OK: Disconnessione client secondario eseguita con successo.\n\n", current_session->sc_secondary);
+                            printf("! Eliminazione della sessione");
+                            free(current_session); /* è già stata rimossa dalla lista nel login, manca solo da liberare lo spazio*/
+                            printf("OK: Sessione eliminata con successo");
                         }
-                        reset_scenario();
-                        printf("Reset dello scenario effettuato.\n\n");
-                        continue;*/
+                        printf("SUCCES: Disconessione eseguita con successo\n"
+                                "******************************************************\n\n");
+                        continue;
                     }
 
                     printf("******************************************************\n"
@@ -159,9 +189,10 @@ int main(int argc, char *argv[])
                           "Scenario: %s\n"
                           "Utente: %s\n"
                           "Socket: %d\n"
-                          "******************************************************\n\n"
+                          "Risposta server: "
                           ,buffer, current_session->id , current_session->set.name, strcmp(type, "MAIN") ? current_session->main->username : current_session->secondary->username, i);
                     commandSwitcher(i, buffer, type, current_session, &master);
+                    printf("******************************************************\n\n");
                 }
             }
         } 

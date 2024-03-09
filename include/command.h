@@ -10,7 +10,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+
 #include "utils.h"
+#include "../scenari/prison_break/prison_break.h"
 
 void setList(char* buffer);
 void commandList(char* buffer);
@@ -18,23 +20,23 @@ void typeList(char* buffer);
 void sessionList(char* buffer);
 void commandSwitcher(int socket, char* message, char* type, struct session* current_session, fd_set* master);
 
-bool signupHandler(char* username, char* pwd); /* registrazione */
-bool loginHandler(char* username, char* pwd, char* err_buffer); /* login */
+void signupHandler(struct mex message, int socket); /* registrazione */
+void loginHandler(struct mex message, int socket); /* login */
 void endHandler(struct session* current_session, char* type, fd_set* master); /* logout */
 
-void stopHandler(int nSocket); /* chiusura del server */ /* Non dovrebbe servire */
-
-void startHandler(char* opt);
+void startHandler(struct mex message, int socket);
 
 /*  comando choose bivalente
     primo significato: all'inizio serve per scegliere che tipo di giocatore si vuole essere
     secondo significato: se si sceglie il personaggio secondario fa scegliere in quale partita entrare */
-void chooseHandler(char* opt1, char* opt2); 
+void chooseHandler(struct mex message, int socket); 
 
-void lookHandler(char* opt); /* opt può essere null nel caso dello scenario, altrimenti può essere una location o un oggeto */
-void takeHandler(char* obj);
-void useHandler(char* obj1, char* obj2);
-void objsHandler();
+void lookHandler(struct mex message, int socket); /* opt può essere null nel caso dello scenario, altrimenti può essere una location o un oggeto */
+void takeHandler(struct mex message, int socket);
+void useHandler(struct mex message, int socket);
+void objsHandler(struct mex message, int socket, struct session* current_session);
+
+void sendInfos(struct session* current_session, int socket); /* al termine di ogni messaggio si inviano le info sulla partita, tempo rimanente e token raccolti*/
 
 #endif
 

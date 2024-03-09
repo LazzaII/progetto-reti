@@ -38,11 +38,11 @@ void createUser(char* username, char* pwd)
 /**
  * Funzione per trovare la sessione associata ad un socket
  * @param int socket di cui si vuole trovare la sessione associata
- * @param char* 
+ * @param char* dove viene reso il tipo di utente che sta accedendo
 */
 struct session* getSession(int socket, char* type)
 {
-    struct session* tmp;
+    struct session* tmp = NULL;
 
     for (tmp = sessions; tmp->next; tmp = tmp->next)
     {
@@ -56,7 +56,20 @@ struct session* getSession(int socket, char* type)
         }
     }
 
-    return tmp;
+    return tmp; /* in caso di null il giocatore ancora non ha usato il comando choose */
+}
+
+/**
+ * Funzione per deallocare tutti gli utenti
+*/
+void deleteUsers() 
+{
+    struct user* tmp;
+    while(users_list){
+        tmp = users_list;
+        users_list = users_list->next;
+        free(tmp);
+    }
 }
 
 /**
@@ -73,8 +86,8 @@ bool login(char* username, char* pwd, char* err_buffer)
     if(u != NULL) {
         if(strcmp(pwd, u->password) == 0) {
             if(u->logged == false) {
-               u->logged = true;
-               return true; 
+                u->logged = true;
+                return true; 
             }
             else {
                 /* utente già loggato in un'altra sessione */

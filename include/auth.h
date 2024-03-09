@@ -11,6 +11,7 @@
 struct user* findUser(char* username);
 void createUser(char* username, char* pwd);
 struct session* getSession(int socket, char* type);
+void deleteUsers();
 
 /* Autenticazione  */
 bool login(char* username, char* pwd, char* err_buffer);

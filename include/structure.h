@@ -4,6 +4,7 @@
 #include <time.h>
 
 #define MAX_OBJ_LOC 2
+#define MAX_LOC_SET 3
 
 /**
  * Tipo bool definito visto che non è presente di base in c
@@ -59,10 +60,10 @@ struct object
     char* description;
     char* use_description;
 
-    bool pickedUp;
+    bool pickedUp; /* se è stato raccolot */
     bool used; /* se è stato utilizzato e non può essere più utilizzato (ex. use telefono sapone = bomba dopo non si può più usare telefono e sapone) */
     bool found; /* se la location è stata scoperta, per evitare chiamate a caso senza "scoprire" la stanza */
-    bool is_token;
+    bool is_token; /* se rappresenta un token */
 
     struct riddle* riddle; /* nel caso l'oggetto sia bloccato da un enigma */
 };
@@ -105,13 +106,14 @@ struct session
     /* dati della sessione */
     int id; /* utile per l'associazione con il client aggiuntivo */
     struct set set; /* scenario scelto */
-    time_t time; /* tempo per lo scenario */
+    time_t start_time; /* tempo di inizio*/
     int sc_main; /* client principale */
     struct user* main; 
     int sc_secondary; /* client aggiuntivo */
     struct user* secondary;
 
-    int token_pickedUp; /* numero di token raccolti */
+    /* numero di token raccolti */
+    int token_pickedUp; 
     int secondary_token_pickedUp;
 
     /* var per quando si sta aspettando risposta da un indovinello*/
