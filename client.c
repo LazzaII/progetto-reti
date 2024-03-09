@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
         perror("ERR: Errore nella ricezione delle istruzioni");
         exit(1);
     }
-    printf("%s"
-            "\n******************************************************\n\n", buffer);
+    printf("%s\n"
+            "******************************************************\n\n", buffer);
     
 
     FD_ZERO(&master);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     FD_SET(STDIN_FILENO, &master);
 
     for(;;) {
-        memset(buffer, 0, sizeof(buffer));
+        memset(buffer, 0, sizeof(DIM_BUFFER));
         read_fds = master;
         select(cl_sock + 1, &read_fds, NULL, NULL, NULL);
 
@@ -68,21 +68,23 @@ int main(int argc, char *argv[])
             /* Controllo dello STDIN per ricezione comandi da terminale del client */
             if(FD_ISSET(i, &read_fds)) {
                 if(i == STDIN_FILENO) {
-                    fgets(buffer, COMANDO_DIM, stdin);
-                    /* elimino carattere \n messo dalla fgets */
-                    buffer[strcspn(buffer, "\n")] = 0; 
+                    fgets(buffer, DIM_BUFFER, stdin);
+                    /* eliminazione del carattere di newline e aggiunta dello spazio finale per strtok */
+                    strtok(buffer, "\n"); 
+                    strcat(buffer, " ");
+
                     ret = send(cl_sock, buffer, DIM_BUFFER, 0);
                     if(ret < 0){
                         perror("ERR: Errore durante l'invio del messaggio");
                         exit(1);
                     }
 
-                    /* controllare se si è giocatore secondario per bloccare lo STDIN finchè non arriva la chiamata */
+                    /* TODO: controllare se si è giocatore secondario per bloccare lo STDIN finchè non arriva la chiamata */
 
                     memset(buffer, 0, sizeof(buffer));
                     ret = recv(cl_sock, buffer, DIM_BUFFER, 0);
                     if(ret < 0){
-                        perror("ERR: Errore in ricezione del messaggio");
+                        perror("ERR: Errore in ricezione del messaggio di risposta");
                     }
                     printf("%s", buffer);
                 }

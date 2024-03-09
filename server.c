@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     
     for(;;) 
     {
-        memset(buffer, 0, sizeof(buffer));
+        memset(buffer, 0, sizeof(DIM_BUFFER));
         readfds = master;
         select(fdmax + 1, &readfds, NULL, NULL, NULL);
 
@@ -97,8 +97,8 @@ int main(int argc, char *argv[])
                                 "******************************************************\n");
                         continue;
                     }
-                    /* TODO MANCA DA MANDARE LA CHIUSURA AI CLIENT */
                     deleteUsers(); /* basta eliminare gli utenti perchè se siamo arrivati qui le sessioni sono già state deallocate */
+                    close(listening_socket);
                     printf("OK: Server chiuso correttamente\n"
                             "******************************************************\n");
                     exit(0);
@@ -116,7 +116,6 @@ int main(int argc, char *argv[])
                     printf("******************************************************\n"
                            "Nuovo client connesso, socket: %d\n"
                            , communication_socket);
-                    /* non va oltre zio pera */
 
                     /* invio al client gli scenari disponibili */
                     memset(buffer, 0, DIM_BUFFER);
@@ -132,6 +131,7 @@ int main(int argc, char *argv[])
                 }
                 /* Se non è nessuno dei socket precedenti è quello di comunicazione */
                 else {
+                    printf("PROVA 3"); /* DEBUG */
                     char* type = NULL; 
                     ret = recv(i, (void*)buffer, DIM_BUFFER, 0);
                     struct session* current_session = getSession(i, type); /* potrebbe returnane NULL se non trova niente (login, signup)*/
