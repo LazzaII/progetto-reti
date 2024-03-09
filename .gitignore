@@ -3,3 +3,8 @@
 
 # object file
 *.o
+
+# other
+server
+client
+other

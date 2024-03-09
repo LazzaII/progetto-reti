@@ -48,15 +48,19 @@ void sessionList(char* buffer)
     /* se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client */
     for (current = sessions; current->next; current = current->next)
     {
-        // TODO: da rivedere
-        sprintf(tmp, "\t- %d: %s\n\0", current->id, current->set.name);
+        /* TODO: da rivedere */ 
+        sprintf(tmp, "\t- %d: %s\n%c", current->id, current->set.name, '\0');
         strcat(buffer, tmp);
     }
 }
 
 /**
  * Funzione di switch dei comandi ai rispettivi handler, tramite socket risponde direttamente al client corretto
- * 
+ * @param int socket a cui inviare le comunicazioni
+ * @param char* messaggio ricevuto dal client
+ * @param char* tipo di personaggio che ha inviato il messaggio
+ * @param session* struttura contenente la sessione di riferimento del client
+ * @param fd_set* lista principale dei descrittori
 */
 void commandSwitcher(int socket, char *message, char* type, struct session* current_session, fd_set* master)
 {
@@ -132,7 +136,7 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
             }
 
             /* se va bene il formato chiamata al comando di handler */
-            endHandler(current_session, type, &master);
+            endHandler(current_session, type, master);
             printf("Chiusura da parte del client gestita correttamente"); 
         }
         /* comando non riconosciuto */
@@ -182,15 +186,15 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
     if(strcmp(type, "MAIN") == 0) {
         /* chiusura del socket principale*/
         close(current_session->sc_main);
-        FD_CLR(current_session->sc_main, &master);
-        logout(&current_session->main);
+        FD_CLR(current_session->sc_main, master);
+        logout(current_session->main);
 
         /* invio della chiusura al secondo client */
         buffer = "Il client principale ha deciso di terminare la partita\n\0";
         send(current_session->sc_secondary, buffer, DIM_BUFFER, 0);   
         close(current_session->sc_secondary);
-        FD_CLR(current_session->sc_secondary, &master);
-        logout(&current_session->secondary);
+        FD_CLR(current_session->sc_secondary, master);
+        logout(current_session->secondary);
 
         /* eliminazione fisica della sessione */
         free(current_session);
@@ -198,8 +202,8 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
     /* nel caso di utente principale va chiusa solo la connessione del client secondario */
     else {
         close(current_session->sc_secondary);
-        FD_CLR(current_session->sc_secondary, &master);
-        logout(&current_session->secondary);
+        FD_CLR(current_session->sc_secondary, master);
+        logout(current_session->secondary);
     }
     
 }

@@ -1,12 +1,12 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/select.h>
 
 #include "include/auth.h"
 #include "include/structure.h"
@@ -129,28 +129,28 @@ int main(int argc, char *argv[])
 
                     /* TODO: chiusura anticipiata client */ 
                     if(ret == 0) {
-                        // printf("Sconnessione socket %d in corso...\n", i);
-                        // printf("%s", logout_user(i));
-                        // close(i);
-                        // printf("Socket %d chiuso.\n", i);
-                        // FD_CLR(i, &master);
-                        // printf("Socket %d rimosso dal set dei descrittori.\n"
-                        //        "Sconnessione client effettuata con successo.\n\n", i);
+                        /*printf("Sconnessione socket %d in corso...\n", i);
+                        printf("%s", logout_user(i));
+                        close(i);
+                        printf("Socket %d chiuso.\n", i);
+                        FD_CLR(i, &master);
+                        printf("Socket %d rimosso dal set dei descrittori.\n"
+                               "Sconnessione client effettuata con successo.\n\n", i);
                                
-                        // /* sconnetto anche l'altro giocatore se presente */
-                        // if((player_socket = prendi_altro_giocatore(i)) >= 0) {
-                        //     printf("Presente gruppo, disconnessione altro giocatore...");
-                        //     printf("%s", logout_user(player_socket));
-                        //     close(player_socket);
-                        //     printf("Socket %d chiuso.\n", player_socket);
-                        //     FD_CLR(player_socket, &master);
-                        //     printf("Socket %d rimosso dal set dei descrittori.\n"
-                        //             "Sconnessione client effettuata con successo.\n\n", player_socket);
-                        //     printf("%s", elimina_gruppo());
-                        // }
-                        // reset_scenario();
-                        // printf("Reset dello scenario effettuato.\n\n");
-                        // continue;
+                        sconnetto anche l'altro giocatore se presente
+                        if((player_socket = prendi_altro_giocatore(i)) >= 0) {
+                            printf("Presente gruppo, disconnessione altro giocatore...");
+                            printf("%s", logout_user(player_socket));
+                            close(player_socket);
+                            printf("Socket %d chiuso.\n", player_socket);
+                            FD_CLR(player_socket, &master);
+                            printf("Socket %d rimosso dal set dei descrittori.\n"
+                                    "Sconnessione client effettuata con successo.\n\n", player_socket);
+                            printf("%s", elimina_gruppo());
+                        }
+                        reset_scenario();
+                        printf("Reset dello scenario effettuato.\n\n");
+                        continue;*/
                     }
 
                     printf("******************************************************\n"
