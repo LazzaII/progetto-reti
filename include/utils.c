@@ -190,6 +190,7 @@ void deleteUsers()
 {
     struct user* tmp;
     while(users_list){
+        
         tmp = users_list;
         users_list = users_list->next;
         free(tmp);

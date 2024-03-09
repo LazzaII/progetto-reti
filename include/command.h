@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "../scenari/prison_break/prison_break.h"
 
+void instruction(char* buffer);
 void setList(char* buffer);
 void commandList(char* buffer);
 void commandSwitcher(int socket, char* message, char* type, struct session* current_session, fd_set* master);

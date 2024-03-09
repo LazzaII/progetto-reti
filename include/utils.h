@@ -20,7 +20,7 @@ time_t getCurrentTime();
 int remainingTime(time_t time);
 bool gameOn();
 struct user* findUserFromSocket(int socket);
-struct user* findUser(char* username);
+struct user* findUser(char* username); 
 void createUser(char* username, char* pwd);
 void createSession(int socket, int pos_set);
 struct session* firstFreeSession(int set);

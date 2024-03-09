@@ -1,5 +1,18 @@
 #include "command.h"
 
+/**
+ * Funzione per valorizzare il buffer con le istruzioni
+ * @param char* buffer da valorizzare
+*/
+void instruction(char* buffer)
+{
+    strcpy(buffer, 
+            "Benvenuto in questa escape room, per prima cosa è necessario registrarsi. Se si ha già un account si può fare il login.\n"
+            "\t- signup username pwd: comando per registrarsi\n"
+            "\t- login username pwd: comando per effettuare il login\n\n"
+            "Altrimenti per uscire puoi usare il comando:\n"
+            "\t- end");
+}
 
 /**
  * Funzione per valorizzare buffer con la lista degli scenari
@@ -43,6 +56,8 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
 {
     struct mex substringed_mex = substringMessage(message); 
     char buffer[DIM_BUFFER];
+
+    memset(buffer, 0, sizeof(DIM_BUFFER));
 
     /* Switch dei comandi con relativa chiamata ai vari handler */
     if(substringed_mex.ok == true) {
@@ -108,8 +123,15 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
                 return;
             }
 
-            /* se va bene il formato chiamata al comando di handler */
-            endHandler(current_session, type, master);
+            /* si controlla se esce prima di aver joinato una partita */
+            if(current_session == NULL) {
+                close(socket);
+                FD_CLR(socket, master);
+            }
+            else
+                /* se va bene il formato chiamata al comando di handler */
+                endHandler(current_session, type, master);
+
             printf("Disconessione da parte del client gestita correttamente"); 
         }
         /* comando non riconosciuto */
@@ -135,6 +157,8 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
 void signupHandler(struct mex message, int socket)
 {
     char buffer[DIM_BUFFER];
+
+    memset(buffer, 0, sizeof(DIM_BUFFER));
 
     /* controllo formato messaggio */
     if(message.opt1 == NULL || message.opt2 == NULL){
@@ -165,6 +189,8 @@ void loginHandler(struct mex message, int socket)
 {
     char buffer[DIM_BUFFER];
 
+    memset(buffer, 0, sizeof(DIM_BUFFER));
+
     /* controllo formato messaggio */
     if(message.opt1 == NULL || message.opt2 == NULL){
         strcpy(buffer, "Compilare correttamente i campi: login username pwd\n");
@@ -193,6 +219,8 @@ void loginHandler(struct mex message, int socket)
 void endHandler(struct session* current_session, char* type, fd_set* master)
 {
     char buffer[DIM_BUFFER];
+
+    memset(buffer, 0, sizeof(DIM_BUFFER));
 
     /* nel caso di utente principale va chiusa la connessione ad entrambi i client */
     if(strcmp(type, "MAIN") == 0) {
@@ -229,6 +257,8 @@ void startHandler(struct mex message, int socket)
     char buffer[DIM_BUFFER];
     struct session* s;
 
+    memset(buffer, 0, sizeof(DIM_BUFFER));
+
     /* si controlla il formato del messaggio */
     if(message.opt1 == NULL || message.opt2 == NULL){
         strcpy(buffer, "Compilare correttamente i campi: start num tipo\n");
@@ -246,7 +276,7 @@ void startHandler(struct mex message, int socket)
             send(socket, buffer, DIM_BUFFER, 0); 
             printf("Scenario Prison Break inizializzato, inviati comandi al giocatore principale");
         }
-        /* Giocatore secondario -> si fa joinare nella prima sessione libera*/
+        /* Giocatore secondario -> si fa joinare nella prima sessione libera e si invia la comunicazione al giocatore principale che è entrato un nuovo giocatore*/
         else if(strcmp(message.opt2, "1") == 0) {
             s = firstFreeSession(1);
             s->secondary = findUserFromSocket(socket);
@@ -255,7 +285,11 @@ void startHandler(struct mex message, int socket)
                             "Nel momento in cui arriva la chiamata il secondino può decidere quanto monete richiedere al prigioniero per farlo evadere (tra 1 e 3).\n"
                             "Fino a quel momento non può fare altro.");
             send(socket, buffer, DIM_BUFFER, 0); 
-            printf("Scenario Prison Break joinato, inviati comandi al giocatore secondario");
+            printf("Scenario Prison Break joinato, inviate indicazioni al giocatore secondario");
+            memset(buffer, 0, sizeof(DIM_BUFFER));
+            strcpy(buffer, "*** Secondino disponbile... shhh ***");
+            send(s->main->socket, buffer, DIM_BUFFER, 0);
+            printf("Comunicazione di join inviata al personaggio principale");
         }
         else {
             strcpy(buffer, "Compilare correttamente i campi del comando start: tipo di giocatore inserito non esistente\n");
@@ -282,6 +316,8 @@ void objsHandler(struct mex message, int socket, struct session* current_session
     int i = 0, max = 0;
     struct object* objs = current_session->set.objs;
     char buffer[DIM_BUFFER];
+
+    memset(buffer, 0, sizeof(DIM_BUFFER));
 
     /* controllo del formato del messaggio */
     if(message.opt1 != NULL || message.opt2 != NULL){
@@ -319,6 +355,8 @@ void objsHandler(struct mex message, int socket, struct session* current_session
 void sendInfos(struct session* current_session, int socket) 
 {
     char buffer[DIM_BUFFER];
+
+    memset(buffer, 0, sizeof(DIM_BUFFER));
     /* valorizzaione delle info */
     strcpy(buffer, "SESSION INFOS - Tempo rimanente: ");
     sprintf("%s%d", buffer, remainingTime(current_session->start_time));

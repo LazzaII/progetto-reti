@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
                                 "******************************************************\n");
                         continue;
                     }
+                    /* TODO MANCA DA MANDARE LA CHIUSURA AI CLIENT */
                     deleteUsers(); /* basta eliminare gli utenti perchè se siamo arrivati qui le sessioni sono già state deallocate */
                     printf("OK: Server chiuso correttamente\n"
                             "******************************************************\n");
@@ -115,14 +116,15 @@ int main(int argc, char *argv[])
                     printf("******************************************************\n"
                            "Nuovo client connesso, socket: %d\n"
                            , communication_socket);
+                    /* non va oltre zio pera */
 
                     /* invio al client gli scenari disponibili */
-                    memset(buffer, 0, sizeof(buffer));
-                    setList(buffer);
-                    send(i, buffer, DIM_BUFFER, 0); 
+                    memset(buffer, 0, DIM_BUFFER);
+                    instruction(buffer);
+                    send(communication_socket, buffer, DIM_BUFFER, 0); 
                     printf("Risposta server: scenari disponibili inviati al client.\n"
                            "******************************************************\n\n");
-
+                    
                     FD_SET(communication_socket, &master);
                     if(communication_socket > fdmax) {
                         fdmax = communication_socket;
