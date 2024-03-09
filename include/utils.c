@@ -4,6 +4,8 @@
 struct user* users_list = NULL;
 struct session* sessions = NULL;
 
+int num_sessioni = 0; /* progressivo, non cancella quando si esce*/
+
 /**
  * Funzione per suddividere il messaggio in comando, opzione1 e opzione2
  * @param char* message inviato da terminale
@@ -56,4 +58,149 @@ int remainingTime(time_t startTime)
 bool gameOn()
 {
     return sessions != NULL ? true : false;
+}
+
+/**
+ * Funzione che rende l'utente dato il socket
+ * @param socket socket dell'utente che stiamo cecando
+*/
+struct user* findUserFromSocket(int socket) 
+{
+    struct user* u;
+    for (u = users_list; u->next; u = u->next)
+    {
+        if(socket == u->socket)
+            return u;
+    }
+    return NULL;
+}
+
+/**
+ * Funzione per cercare se un utente è presente nella lista degli utenti registrati
+ * @param char* username nome dell'utente da cercare
+ * @return user* | NULL struttura dell'utente trovato oppure NULL se non è presente
+*/
+struct user* findUser(char* username) 
+{
+    struct user* u;
+    for (u = users_list; u->next; u = u->next)
+    {
+        if(strcmp(username, u->username) == 0)
+            return u;
+    }
+    return NULL;
+}
+
+/**
+ * Funzione per creare un utente, se l'utente è gia presente rende NULL (stesso nome utente)
+ * @param char* username nome dell'utente da aggiungere
+ * @param char* pwd password dell'utente da aggiungere
+ * @return user* | NULL struttura appena creata oppure NULL se già presente
+*/
+void createUser(char* username, char* pwd) 
+{
+    struct user* u = users_list;
+    /* si scorre tutta la lista per aggiugere il nuovo utente */
+    while (u) 
+        u = u->next;
+
+    u = malloc(sizeof(struct user));
+    u->username = username;
+    u->password = pwd;
+    u->next = NULL;
+}
+
+/**
+ * Funzione per creare una nuova sessione
+ * @param int socket a cui associare la sessione
+ * @param set 
+*/
+void createSession(int socket, int pos_set) 
+{   
+    struct session* s = sessions;
+    while (s)
+        s = sessions->next;
+
+    s = malloc(sizeof(struct session));
+    s->id = ++num_sessioni;
+
+    /* valorizzazione dello scenario */
+    switch (pos_set)
+    {
+        case 1:
+            s->set = prison_break;
+            break;
+        /* aggiungere gli altri scenari qui*/
+    }
+
+    s->start_time = time(NULL);
+    s->main = findUserFromSocket(socket);
+    s->secondary = NULL;
+    s->token_pickedUp = 0;
+    s->secondary_token_pickedUp = 0;
+    s->active_riddle = false;
+    s->pos_riddle = 0;
+    s->active_call = false;
+    s->next = NULL;
+}
+
+/**
+ * Funzione per trovare la prima sessione libera
+ * @param int id dello scenario che stiamo cercando
+*/
+struct session* firstFreeSession(int set)
+{
+    struct session* s = sessions;
+    for (; s->next; s = s->next)
+    {
+        if(s->set.id == set && s->secondary == NULL) 
+            return s; 
+    }
+    return NULL;
+}
+
+/**
+ * Funzione per trovare la sessione associata ad un socket
+ * @param int socket di cui si vuole trovare la sessione associata
+ * @param char* dove viene reso il tipo di utente che sta accedendo
+*/
+struct session* getSession(int socket, char* type)
+{
+    struct session* tmp = NULL;
+
+    for (tmp = sessions; tmp->next; tmp = tmp->next)
+    {
+        if(tmp->main->socket == socket){ /* giocatore principale */
+            strcpy(type, "MAIN");
+            break;
+        }
+        if(tmp->secondary->socket == socket){ /* giocatore secondario */
+            strcpy(type, "SEC");
+            break;
+        }
+    }
+
+    return tmp; /* in caso di null il giocatore ancora non ha usato il comando choose */
+}
+
+/**
+ * Funzione per deallocare tutti gli utenti
+*/
+void deleteUsers() 
+{
+    struct user* tmp;
+    while(users_list){
+        tmp = users_list;
+        users_list = users_list->next;
+        free(tmp);
+    }
+}
+
+/**
+ * Funzione per controllare se un utente ha fatto login
+ * @param int socket dell'utente che stiamo cercando
+*/
+bool userLogged(int socket) 
+{
+    return findUserFromSocket(socket)->logged;
 }

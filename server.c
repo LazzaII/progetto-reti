@@ -168,12 +168,12 @@ int main(int argc, char *argv[])
                         if(strcmp(type, "MAIN") == 0) {
                             printf("Disconessione altro giocatore..."
                                     "! Sconnessione socket %d in corso...\n"
-                                    "! Eliminazione utente: %s", current_session->sc_secondary, current_session->secondary->username);
-                            close(current_session->sc_secondary);
-                            printf("OK: Socket %d chiuso.\n", current_session->sc_secondary);
-                            FD_CLR(current_session->sc_secondary, &master);
+                                    "! Eliminazione utente: %s", current_session->secondary->socket, current_session->secondary->username);
+                            close(current_session->secondary->socket);
+                            printf("OK: Socket %d chiuso.\n", current_session->secondary->socket);
+                            FD_CLR(current_session->secondary->socket, &master);
                             printf("OK: Socket %d rimosso dal set dei descrittori.\n"
-                                    "OK: Disconnessione client secondario eseguita con successo.\n\n", current_session->sc_secondary);
+                                    "OK: Disconnessione client secondario eseguita con successo.\n\n", current_session->secondary->socket);
                             printf("! Eliminazione della sessione");
                             free(current_session); /* è già stata rimossa dalla lista nel login, manca solo da liberare lo spazio*/
                             printf("OK: Sessione eliminata con successo");
@@ -192,7 +192,7 @@ int main(int argc, char *argv[])
                           "Risposta server: "
                           ,buffer, current_session->id , current_session->set.name, strcmp(type, "MAIN") ? current_session->main->username : current_session->secondary->username, i);
                     commandSwitcher(i, buffer, type, current_session, &master);
-                    printf("******************************************************\n\n");
+                    printf("\n******************************************************\n\n");
                 }
             }
         } 

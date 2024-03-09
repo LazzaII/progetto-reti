@@ -16,20 +16,13 @@
 
 void setList(char* buffer);
 void commandList(char* buffer);
-void typeList(char* buffer);
-void sessionList(char* buffer);
 void commandSwitcher(int socket, char* message, char* type, struct session* current_session, fd_set* master);
 
 void signupHandler(struct mex message, int socket); /* registrazione */
 void loginHandler(struct mex message, int socket); /* login */
 void endHandler(struct session* current_session, char* type, fd_set* master); /* logout */
 
-void startHandler(struct mex message, int socket);
-
-/*  comando choose bivalente
-    primo significato: all'inizio serve per scegliere che tipo di giocatore si vuole essere
-    secondo significato: se si sceglie il personaggio secondario fa scegliere in quale partita entrare */
-void chooseHandler(struct mex message, int socket); 
+void startHandler(struct mex message, int socket); /* formato del comando start cambiato, start num tipo*/
 
 void lookHandler(struct mex message, int socket); /* opt può essere null nel caso dello scenario, altrimenti può essere una location o un oggeto */
 void takeHandler(struct mex message, int socket);

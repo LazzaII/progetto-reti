@@ -34,6 +34,7 @@ struct user
 
     /* dati per la sessione */
     bool logged;
+    int socket;
 
     /* lista utenti */
     struct user* next;
@@ -104,12 +105,14 @@ struct location
 struct session
 {
     /* dati della sessione */
-    int id; /* utile per l'associazione con il client aggiuntivo */
+    int id; /* per debug */
     struct set set; /* scenario scelto */
     time_t start_time; /* tempo di inizio*/
-    int sc_main; /* client principale */
+
+    /* client principale */
     struct user* main; 
-    int sc_secondary; /* client aggiuntivo */
+
+     /* client aggiuntivo */
     struct user* secondary;
 
     /* numero di token raccolti */
