@@ -67,7 +67,7 @@ bool gameOn()
 struct user* findUserFromSocket(int socket) 
 {
     struct user* u;
-    for (u = users_list; u->next; u = u->next)
+    for (u = users_list; u; u = u->next)
     {
         if(socket == u->socket)
             return u;
@@ -83,7 +83,7 @@ struct user* findUserFromSocket(int socket)
 struct user* findUser(char* username) 
 {
     struct user* u;
-    for (u = users_list; u->next; u = u->next)
+    for (u = users_list; u; u = u->next)
     {
         if(strcmp(username, u->username) == 0)
             return u;
@@ -99,15 +99,22 @@ struct user* findUser(char* username)
 */
 void createUser(char* username, char* pwd) 
 {
-    struct user* u = users_list;
-    /* si scorre tutta la lista per aggiugere il nuovo utente */
-    while (u) 
-        u = u->next;
+    struct user* u;
 
     u = malloc(sizeof(struct user));
-    u->username = username;
-    u->password = pwd;
+    strcpy(u->username, username);
+    strcpy(u->password, pwd);
+    u->logged = false;
+    u->socket = -1;
     u->next = NULL;
+
+    /* aggiunta in cima alla lista tanto non ci interessa l'ordine */
+    if(users_list) {
+        u->next = users_list->next;
+        users_list->next = u;
+    }
+    else 
+        users_list = u;
 }
 
 /**
@@ -168,7 +175,7 @@ struct session* getSession(int socket, char* type)
 {
     struct session* tmp = NULL;
 
-    for (tmp = sessions; tmp->next; tmp = tmp->next)
+    for (tmp = sessions; tmp; tmp = tmp->next)
     {
         if(tmp->main->socket == socket){ /* giocatore principale */
             strcpy(type, "MAIN");
@@ -190,7 +197,6 @@ void deleteUsers()
 {
     struct user* tmp;
     while(users_list){
-        
         tmp = users_list;
         users_list = users_list->next;
         free(tmp);
@@ -200,8 +206,11 @@ void deleteUsers()
 /**
  * Funzione per controllare se un utente ha fatto login
  * @param int socket dell'utente che stiamo cercando
+ * @return true se è già loggato, false altrimenti
 */
 bool userLogged(int socket) 
 {
-    return findUserFromSocket(socket)->logged;
+    /* TODO non funziona qualcosa nella findUserFromSocket*/
+    struct user* u = findUserFromSocket(socket);
+    return u != NULL ? u->logged : false;
 }

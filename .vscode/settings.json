@@ -5,6 +5,7 @@
         "prison_break.h": "c",
         "auth.h": "c",
         "in.h": "c",
-        "structure.h": "c"
+        "structure.h": "c",
+        "command.h": "c"
     }
 }

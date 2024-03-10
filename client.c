@@ -12,19 +12,22 @@
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 4242
 #define DIM_BUFFER 1024
-#define COMANDO_DIM 64
 
 int main(int argc, char *argv[])
 {
-    int ret, i, cl_sock;
+    int fdmax, ret, i;
     fd_set  master, read_fds;
     char buffer[DIM_BUFFER];
     struct sockaddr_in sv_addr;
     in_port_t porta = htons(SERVER_PORT);
 
+    /* P principale - S secondario - A attivi a rispondere - N non settato*/
+    char type[2];
+    strcpy(type, "N"); 
+
     printf("! Avvio e inizializzazione del client in corso...\n\n");
-    cl_sock = socket(AF_INET, SOCK_STREAM, 0);
-    if(cl_sock < 0) {
+    fdmax = socket(AF_INET, SOCK_STREAM, 0);
+    if(fdmax < 0) {
         perror("ERR: Errore creazione socket");
         exit(1);
     }
@@ -34,7 +37,7 @@ int main(int argc, char *argv[])
     sv_addr.sin_port = porta;
     inet_pton(AF_INET, SERVER_IP, &sv_addr.sin_addr);
 
-    ret = connect(cl_sock, (struct sockaddr*)&sv_addr, sizeof(sv_addr));
+    ret = connect(fdmax, (struct sockaddr*)&sv_addr, sizeof(sv_addr));
     if(ret < 0) {
         perror("ERR: Errore nella connessione con il server");
         exit(1);
@@ -44,7 +47,7 @@ int main(int argc, char *argv[])
     printf("******************* CLIENT AVVIATO *******************\n");
     memset(buffer, 0, sizeof(buffer));
     /* Ricezione del messaggio iniziale con le istruzioni*/
-    ret = recv(cl_sock, buffer, DIM_BUFFER, 0);
+    ret = recv(fdmax, buffer, DIM_BUFFER, 0);
     if(ret < 0){
         perror("ERR: Errore nella ricezione delle istruzioni");
         exit(1);
@@ -56,46 +59,70 @@ int main(int argc, char *argv[])
     FD_ZERO(&master);
     FD_ZERO(&read_fds);
 
-    FD_SET(cl_sock, &master);
+    FD_SET(fdmax, &master);
     FD_SET(STDIN_FILENO, &master);
 
     for(;;) {
-        memset(buffer, 0, sizeof(DIM_BUFFER));
+        memset(buffer, 0, DIM_BUFFER);
         read_fds = master;
-        select(cl_sock + 1, &read_fds, NULL, NULL, NULL);
+        select(fdmax + 1, &read_fds, NULL, NULL, NULL);
 
-        for(i = 0; i <= cl_sock; i++) {
+        for(i = 0; i <= fdmax; i++) {
             /* Controllo dello STDIN per ricezione comandi da terminale del client */
             if(FD_ISSET(i, &read_fds)) {
                 if(i == STDIN_FILENO) {
+                    memset(buffer, 0, DIM_BUFFER);
                     fgets(buffer, DIM_BUFFER, stdin);
-                    /* eliminazione del carattere di newline e aggiunta dello spazio finale per strtok */
+                    /* se siamo giocatori secondari */
+                    if(strcmp(type, "S") == 0) {
+                        printf("Ancora non sei stato interpellato dal giocatore principale\n");
+                        continue;
+                    }
+
+                    /* eliminazione del carattere di newline e aggiunta dello spazio finale per strtok del messaggio lato server*/
                     strtok(buffer, "\n"); 
                     strcat(buffer, " ");
 
-                    ret = send(cl_sock, buffer, DIM_BUFFER, 0);
+                    ret = send(fdmax, buffer, DIM_BUFFER, 0);
                     if(ret < 0){
                         perror("ERR: Errore durante l'invio del messaggio");
                         exit(1);
                     }
 
-                    /* TODO: controllare se si è giocatore secondario per bloccare lo STDIN finchè non arriva la chiamata */
-
-                    memset(buffer, 0, sizeof(buffer));
-                    ret = recv(cl_sock, buffer, DIM_BUFFER, 0);
-                    if(ret < 0){
-                        perror("ERR: Errore in ricezione del messaggio di risposta");
+                    /* se al momento dell'inserimento del comando di start si sceglie il personaggio secondario blocchiamo l'invio al server, 
+                    il client secondario deve interagire solo quando viene chiamata*/
+                    if(strstr(buffer, "start") != NULL) {
+                        strtok(buffer, " "); 
+                        strtok(NULL, " "); 
+                        strtok(NULL, " ");
+                        if(strcmp(buffer, "2") == 0) 
+                            strcpy(type, "S"); 
+                        else 
+                            strcpy(type, "P"); 
                     }
-                    printf("%s", buffer);
+                    
                 }
                 /* Altrimenti è il server che invia messaggi direttamente, come infos e join del giocatore secondario*/
-                else if(i == cl_sock) {
+                else if(i == fdmax) {
                     memset(buffer, 0, sizeof(buffer));
-                    ret = recv(cl_sock, buffer, DIM_BUFFER, 0);
-                    if(ret < 0){
-                        perror("ERR: Errore in ricezione del messaggio");
+                    ret = recv(fdmax, buffer, DIM_BUFFER, 0);
+
+                    if(ret == 0) {
+                        printf("Disconnessione avvenuta\n");
+                        exit(0);
                     }
-                    printf("%s", buffer);
+
+                    if(ret < 0) {
+                        perror("ERR: Errore in ricezione del messaggio");
+                        exit(1);
+                    }
+
+                    /* TODO: sbloccare client quando c'è la chiamata
+                    if() {
+
+                    }  */
+
+                    printf("%s\n", buffer);
                 }
             }
         } 

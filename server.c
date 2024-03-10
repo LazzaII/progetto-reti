@@ -7,13 +7,13 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "include/auth.h"
 #include "include/structure.h"
 #include "include/command.h"
 #include "include/utils.h"
 #include "scenari/prison_break/prison_break.h"
-
 
 int main(int argc, char *argv[])
 {
@@ -22,7 +22,10 @@ int main(int argc, char *argv[])
     socklen_t addrlen;
     struct sockaddr_in  sv_addr, cl_addr;
     in_port_t porta = htons(atoi(argv[1]));
-    char buffer[DIM_BUFFER];
+    char buffer[DIM_BUFFER], type[DIM_TYPE];
+    struct session* current_session;
+    struct user* current_user;
+
 
     /* ------------------------------------
         Avvio e inizializzazione del server 
@@ -75,7 +78,7 @@ int main(int argc, char *argv[])
     
     for(;;) 
     {
-        memset(buffer, 0, sizeof(DIM_BUFFER));
+        memset(buffer, 0, DIM_BUFFER);
         readfds = master;
         select(fdmax + 1, &readfds, NULL, NULL, NULL);
 
@@ -87,7 +90,7 @@ int main(int argc, char *argv[])
                     scanf("%s", buffer);
                     printf("\n******************************************************\n");
                     if(strcmp(buffer, "stop") != 0) {
-                        printf("WARN: Comando non riconosciuto.\n\n"
+                        printf("WARN: Comando non riconosciuto.\n"
                             "******************************************************\n");
                         continue;
                     }
@@ -131,21 +134,19 @@ int main(int argc, char *argv[])
                 }
                 /* Se non è nessuno dei socket precedenti è quello di comunicazione */
                 else {
-                    printf("PROVA 3"); /* DEBUG */
-                    char* type = NULL; 
+                    memset(buffer, 0, DIM_BUFFER);
                     ret = recv(i, (void*)buffer, DIM_BUFFER, 0);
-                    struct session* current_session = getSession(i, type); /* potrebbe returnane NULL se non trova niente (login, signup)*/
+                    current_session = getSession(i, type); 
+                    /* potrebbe returnane NULL se non trova niente (qualsiasi cosa prima di aver fatto comando start)*/
 
                     if(ret == 0) {
-                        struct user* current_user;
-
                         /* se il client ancora non è entrato in nessuna sessione */
                         if(current_session == NULL) {
                             printf("******************************************************\n"
                               "! Sconnessione socket %d in corso...\n", i);
                             close(i);
                             printf("Socket %d chiuso.\n"
-                                    "Il socket non faceva parte di nessuna partita.", i);
+                                    "Il socket non faceva parte di nessuna partita.\n", i);
                             printf("SUCCES: Disconessione eseguita con successo\n"
                                 "******************************************************\n\n");
                             continue;
@@ -184,7 +185,7 @@ int main(int argc, char *argv[])
                                 "******************************************************\n\n");
                         continue;
                     }
-
+                    
                     printf("******************************************************\n"
                           "Comando: %s\n"
                           "Sessione: %d\n"
@@ -192,9 +193,15 @@ int main(int argc, char *argv[])
                           "Utente: %s\n"
                           "Socket: %d\n"
                           "Risposta server: "
-                          ,buffer, current_session->id , current_session->set.name, strcmp(type, "MAIN") ? current_session->main->username : current_session->secondary->username, i);
+                          ,buffer, 
+                          current_session != NULL ? current_session->id : 0,
+                          current_session != NULL ? current_session->set.name : "non in sessione", 
+                          current_session != NULL ? (strcmp(type, "MAIN") ? current_session->main->username : current_session->secondary->username) : "non in sessione", 
+                          i);
                     commandSwitcher(i, buffer, type, current_session, &master);
                     printf("\n******************************************************\n\n");
+                    if(remainingTime(time(NULL)) != -1 && current_session != NULL) /* siamo in una partita attiva allora si inviano le info sulla sessione*/
+                        sendInfos(current_session, i);
                 }
             }
         } 

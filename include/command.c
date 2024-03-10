@@ -59,6 +59,12 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
 
     memset(buffer, 0, sizeof(DIM_BUFFER));
 
+    /* TODO check fine tempo */
+
+    /* TODO check riddle */
+
+    /* TODO check chiamata */
+
     /* Switch dei comandi con relativa chiamata ai vari handler */
     if(substringed_mex.ok == true) {
         /* comandi di autenticazione */
@@ -87,7 +93,7 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
             if(userLogged(socket) == true)
                 startHandler(substringed_mex, socket);
             else {
-                strcpy(buffer, "Per usare questo comando devi prima fare login, altrimenti se non hai un acount prima devi fare signup\n");
+                strcpy(buffer, "Per usare questo comando devi prima fare login, altrimenti se non hai un account prima devi fare signup\n");
                 send(socket, buffer, DIM_BUFFER, 0); 
                 printf("Tentato comando senza login");
             }
@@ -189,7 +195,7 @@ void loginHandler(struct mex message, int socket)
 {
     char buffer[DIM_BUFFER];
 
-    memset(buffer, 0, sizeof(DIM_BUFFER));
+    memset(buffer, 0, DIM_BUFFER);
 
     /* controllo formato messaggio */
     if(message.opt1 == NULL || message.opt2 == NULL){
@@ -199,14 +205,21 @@ void loginHandler(struct mex message, int socket)
         return;
     }
 
+
     /* chiamata alla funzione di login*/
     if(login(message.opt1, message.opt2, socket, buffer) == true) {
         strcpy(buffer, "Login avvenuto con successo\n");
         send(socket, buffer, DIM_BUFFER, 0); 
         printf("Nuovo utente loggato. Username: %s", message.opt1);
+
+        memset(buffer, 0, DIM_BUFFER);
+        setList(buffer);
+        send(socket, buffer, DIM_BUFFER, 0); 
+        printf(" - Invio lista scenari.");
     }
     else {
         send(socket, buffer, DIM_BUFFER, 0); 
+        strtok(buffer, "\n"); /* lo stampa già il server, ma il client no*/
         printf("Comando inserito riconosciuto ma %s", buffer);
     }
 }
@@ -360,7 +373,7 @@ void sendInfos(struct session* current_session, int socket)
     /* valorizzaione delle info */
     strcpy(buffer, "SESSION INFOS - Tempo rimanente: ");
     sprintf("%s%d", buffer, remainingTime(current_session->start_time));
-    strcpy(buffer, ", Token raccolti: ");
+    strcpy(buffer, "secondi , Token raccolti: ");
     sprintf("%s%d", buffer, current_session->token_pickedUp);
     strcpy(buffer, ", Token secondari raccolti: ");
     sprintf("%s%d", buffer, current_session->secondary_token_pickedUp);

@@ -9,6 +9,7 @@
 
 #define MAX_TIME 600 /* tempo massimo in secondi per tutti gli scenari*/
 #define DIM_BUFFER 1024 /* grandezza buffer di client e server */
+#define DIM_TYPE 4 /*  */
 
 /* Variabili globali */
 extern struct user* users_list;

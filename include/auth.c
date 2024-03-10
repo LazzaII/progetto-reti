@@ -20,19 +20,19 @@ bool login(char* username, char* pwd, int socket, char* err_buffer)
             }
             else {
                 /* utente già loggato in un'altra sessione */
-                err_buffer = "Utente già loggato.";
+                strcpy(err_buffer, "Utente già loggato.\n");
                 return false;
             } 
         }
         else {
             /* password sbagliata */
-            err_buffer = "Password sbagliata.";
+            strcpy(err_buffer, "Password sbagliata.\n");
             return false;  
         }
     }
     else {
         /* utente non trovato */
-        err_buffer = "Utente non trovato.";
+        strcpy(err_buffer, "Utente non trovato.\n");
         return false; 
     }
 }
@@ -47,10 +47,11 @@ bool signup(char* username, char* pwd)
 {
     struct user* u = findUser(username);
 
+
     /* si controlla se esiste un utente già presente altrimenti lo si crea */
     if(u == NULL) {
-       createUser(username, pwd);
-       return true;
+        createUser(username, pwd);
+        return true;
     }
     else {
         return false; /* utente già presente */

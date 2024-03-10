@@ -29,8 +29,8 @@ struct mex
 struct user
 {
     /* dati utente */
-    char* username;
-    char* password;
+    char username[255];
+    char password[255];
 
     /* dati per la sessione */
     bool logged;
