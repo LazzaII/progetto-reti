@@ -158,7 +158,7 @@ void createSession(int socket, int pos_set)
 struct session* firstFreeSession(int set)
 {
     struct session* s = sessions;
-    for (; s->next; s = s->next)
+    for (; s; s = s->next)
     {
         if(s->set.id == set && s->secondary == NULL) 
             return s; 
@@ -210,7 +210,6 @@ void deleteUsers()
 */
 bool userLogged(int socket) 
 {
-    /* TODO non funziona qualcosa nella findUserFromSocket*/
     struct user* u = findUserFromSocket(socket);
     return u != NULL ? u->logged : false;
 }

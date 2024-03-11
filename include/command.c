@@ -37,9 +37,9 @@ void commandList(char* buffer)
 {
     strcpy(buffer, 
             "Lista dei comandi disponibili:\n"
-            "\t- look [loc | obj]: senza argomenti rende la descrizione dello scenario, altrimenti la descrizione dell'oggeto/location in questione.\n"
+            "\t- look [loc | obj]: senza argomenti rende la descrizione dello scenario, altrimenti la descrizione dell'oggetto/location in questione.\n"
             "\t- take obj: raccoglie l'oggetto <obj> indicato come parametro.\n"
-            "\t- use obj1 [obj2]: permette di utilizzare l'oggeto <obj> indicato come parametro o di usarlo in maniera combinata con l'oggeto <obj2>.\n"
+            "\t- use obj1 [obj2]: permette di utilizzare l'oggetto <obj> indicato come parametro o di usarlo in maniera combinata con l'oggetto <obj2>.\n"
             "\t- objs: rende la lista degli oggetti raccolti.\n"
             "\t- end: termina la partita ed esce dal gioco.\n");
 }
@@ -57,7 +57,7 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
     struct mex substringed_mex = substringMessage(message); 
     char buffer[DIM_BUFFER];
 
-    memset(buffer, 0, sizeof(DIM_BUFFER));
+    memset(buffer, 0, DIM_BUFFER);
 
     /* TODO check fine tempo */
 
@@ -164,7 +164,7 @@ void signupHandler(struct mex message, int socket)
 {
     char buffer[DIM_BUFFER];
 
-    memset(buffer, 0, sizeof(DIM_BUFFER));
+    memset(buffer, 0, DIM_BUFFER);
 
     /* controllo formato messaggio */
     if(message.opt1 == NULL || message.opt2 == NULL){
@@ -233,7 +233,7 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
 {
     char buffer[DIM_BUFFER];
 
-    memset(buffer, 0, sizeof(DIM_BUFFER));
+    memset(buffer, 0, DIM_BUFFER);
 
     /* nel caso di utente principale va chiusa la connessione ad entrambi i client */
     if(strcmp(type, "MAIN") == 0) {
@@ -270,7 +270,7 @@ void startHandler(struct mex message, int socket)
     char buffer[DIM_BUFFER];
     struct session* s;
 
-    memset(buffer, 0, sizeof(DIM_BUFFER));
+    memset(buffer, 0, DIM_BUFFER);
 
     /* si controlla il formato del messaggio */
     if(message.opt1 == NULL || message.opt2 == NULL){
@@ -290,8 +290,9 @@ void startHandler(struct mex message, int socket)
             printf("Scenario Prison Break inizializzato, inviati comandi al giocatore principale");
         }
         /* Giocatore secondario -> si fa joinare nella prima sessione libera e si invia la comunicazione al giocatore principale che è entrato un nuovo giocatore*/
-        else if(strcmp(message.opt2, "1") == 0) {
-            s = firstFreeSession(1);
+        else if(strcmp(message.opt2, "2") == 0) {
+            /* TODO va in segmentation faul qualcosa qui*/
+            s = firstFreeSession(1); /* 1 sta per Prison Break */
             s->secondary = findUserFromSocket(socket);
             strcpy(buffer, "Il giocatore secondario è un secondino corrotto in attesa della chiamata del prigioniero.\n"
                             "Potrebbe non essere mai chiamato in causa, la sua presenza non è necessaria per vincere.\n"
@@ -299,7 +300,7 @@ void startHandler(struct mex message, int socket)
                             "Fino a quel momento non può fare altro.");
             send(socket, buffer, DIM_BUFFER, 0); 
             printf("Scenario Prison Break joinato, inviate indicazioni al giocatore secondario");
-            memset(buffer, 0, sizeof(DIM_BUFFER));
+            memset(buffer, 0, DIM_BUFFER);
             strcpy(buffer, "*** Secondino disponbile... shhh ***");
             send(s->main->socket, buffer, DIM_BUFFER, 0);
             printf("Comunicazione di join inviata al personaggio principale");
@@ -330,7 +331,7 @@ void objsHandler(struct mex message, int socket, struct session* current_session
     struct object* objs = current_session->set.objs;
     char buffer[DIM_BUFFER];
 
-    memset(buffer, 0, sizeof(DIM_BUFFER));
+    memset(buffer, 0, DIM_BUFFER);
 
     /* controllo del formato del messaggio */
     if(message.opt1 != NULL || message.opt2 != NULL){
@@ -369,7 +370,7 @@ void sendInfos(struct session* current_session, int socket)
 {
     char buffer[DIM_BUFFER];
 
-    memset(buffer, 0, sizeof(DIM_BUFFER));
+    memset(buffer, 0, DIM_BUFFER);
     /* valorizzaione delle info */
     strcpy(buffer, "SESSION INFOS - Tempo rimanente: ");
     sprintf("%s%d", buffer, remainingTime(current_session->start_time));

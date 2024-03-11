@@ -16,6 +16,7 @@ bool login(char* username, char* pwd, int socket, char* err_buffer)
         if(strcmp(pwd, u->password) == 0) {
             if(u->logged == false) {
                 u->logged = true;
+                u->socket = socket;
                 return true; 
             }
             else {
@@ -47,7 +48,6 @@ bool signup(char* username, char* pwd)
 {
     struct user* u = findUser(username);
 
-
     /* si controlla se esiste un utente già presente altrimenti lo si crea */
     if(u == NULL) {
         createUser(username, pwd);
@@ -66,6 +66,8 @@ void logout(struct user* user)
 {
     struct session* current, * prec;
 
+    /* il logout non fa logout*/
+
     /* se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client */
     for (current = sessions; current->next; current = current->next)
     {
@@ -79,4 +81,5 @@ void logout(struct user* user)
 
     /* client (main o aggiuntivo) messo offline */
     user->logged = false;
+    user->socket = -1;
 }
