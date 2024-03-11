@@ -106,6 +106,7 @@ void createUser(char* username, char* pwd)
     strcpy(u->password, pwd);
     u->logged = false;
     u->socket = -1;
+    u->inGame = false;
     u->next = NULL;
 
     /* aggiunta in cima alla lista tanto non ci interessa l'ordine */
@@ -124,9 +125,7 @@ void createUser(char* username, char* pwd)
 */
 void createSession(int socket, int pos_set) 
 {   
-    struct session* s = sessions;
-    while (s)
-        s = sessions->next;
+    struct session* s;
 
     s = malloc(sizeof(struct session));
     s->id = ++num_sessioni;
@@ -141,7 +140,8 @@ void createSession(int socket, int pos_set)
     }
 
     s->start_time = time(NULL);
-    s->main = findUserFromSocket(socket);
+    s->main = findUserFromSocket(socket); /* TODO: qualcosa non funziona qui dopo la prima start*/
+    s->main->inGame = true; /* se si crea la sessione allora è iniziato il gioco */
     s->secondary = NULL;
     s->token_pickedUp = 0;
     s->secondary_token_pickedUp = 0;
@@ -149,6 +149,14 @@ void createSession(int socket, int pos_set)
     s->pos_riddle = 0;
     s->active_call = false;
     s->next = NULL;
+
+    /* aggiunta in cima alla lista tanto non ci interessa l'ordine */
+    if(sessions) {
+        s->next = sessions->next;
+        sessions->next = s;
+    }
+    else 
+        sessions = s;
 }
 
 /**

@@ -90,8 +90,16 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
         }
         /* comandi di inizio gioco*/
         else if (strcmp(substringed_mex.command, "start") == 0) {
-            if(userLogged(socket) == true)
-                startHandler(substringed_mex, socket);
+            /* si controlla se l'utente ha già fatto login, se lo ha fatto si controlla che non sia già in partita*/
+            if(userLogged(socket) == true) {
+                if((strcmp(type, "MAIN") == 0 && current_session->main->inGame) || ((strcmp(type, "SEC") == 0) && current_session->secondary->inGame)) {
+                    strcpy(buffer, "Comando start non disponibile dopo aver già fatto start\n");
+                    send(socket, buffer, DIM_BUFFER, 0); 
+                    printf("Tentato comando start a partita iniziata");
+                }
+                else 
+                    startHandler(substringed_mex, socket);
+            }
             else {
                 strcpy(buffer, "Per usare questo comando devi prima fare login, altrimenti se non hai un account prima devi fare signup\n");
                 send(socket, buffer, DIM_BUFFER, 0); 
@@ -284,26 +292,36 @@ void startHandler(struct mex message, int socket)
     if(strcmp(message.opt1, "1") == 0) { /* 1 = Prison Break*/
         /* Giocatore principale -> si crea una nuova sessione*/
         if(strcmp(message.opt2, "1") == 0) { 
-            createSession(socket, 0);
+            createSession(socket, 1);
             commandList(buffer);
             send(socket, buffer, DIM_BUFFER, 0); 
             printf("Scenario Prison Break inizializzato, inviati comandi al giocatore principale");
         }
         /* Giocatore secondario -> si fa joinare nella prima sessione libera e si invia la comunicazione al giocatore principale che è entrato un nuovo giocatore*/
         else if(strcmp(message.opt2, "2") == 0) {
-            /* TODO va in segmentation faul qualcosa qui*/
             s = firstFreeSession(1); /* 1 sta per Prison Break */
-            s->secondary = findUserFromSocket(socket);
-            strcpy(buffer, "Il giocatore secondario è un secondino corrotto in attesa della chiamata del prigioniero.\n"
-                            "Potrebbe non essere mai chiamato in causa, la sua presenza non è necessaria per vincere.\n"
-                            "Nel momento in cui arriva la chiamata il secondino può decidere quanto monete richiedere al prigioniero per farlo evadere (tra 1 e 3).\n"
-                            "Fino a quel momento non può fare altro.");
-            send(socket, buffer, DIM_BUFFER, 0); 
-            printf("Scenario Prison Break joinato, inviate indicazioni al giocatore secondario");
-            memset(buffer, 0, DIM_BUFFER);
-            strcpy(buffer, "*** Secondino disponbile... shhh ***");
-            send(s->main->socket, buffer, DIM_BUFFER, 0);
-            printf("Comunicazione di join inviata al personaggio principale");
+            if(s) {
+                s->secondary = findUserFromSocket(socket);
+                s->secondary->inGame = true; /* si mette in game il giocatore */
+                strcpy(buffer, "Il giocatore secondario è un secondino corrotto in attesa della chiamata del prigioniero.\n"
+                                "Potrebbe non essere mai chiamato in causa, la sua presenza non è necessaria per vincere.\n"
+                                "Nel momento in cui arriva la chiamata il secondino può decidere quanto monete richiedere al prigioniero per farlo evadere (tra 1 e 3).\n"
+                                "Fino a quel momento non può fare altro.");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Scenario Prison Break joinato, inviate indicazioni al giocatore secondario");
+                memset(buffer, 0, DIM_BUFFER);
+                strcpy(buffer, "*** Secondino disponbile... shhh ***");
+                send(s->main->socket, buffer, DIM_BUFFER, 0);
+                printf("Comunicazione di join inviata al personaggio principale");
+            }
+            else { /* se non ci sono sessioni libere rimandiamo le istruzioni e ci aspettiamo una nuova start */
+                strcpy(buffer, "!ALERT!: Non ci sono sessioni libere al momento\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                memset(buffer, 0, DIM_BUFFER);
+                setList(buffer);
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Impossibile far joinare un giocatore secondario non ci sono sessioni libere, rimandate le istruzioni iniziali");
+            }
         }
         else {
             strcpy(buffer, "Compilare correttamente i campi del comando start: tipo di giocatore inserito non esistente\n");

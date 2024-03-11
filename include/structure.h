@@ -35,6 +35,7 @@ struct user
     /* dati per la sessione */
     bool logged;
     int socket;
+    bool inGame;
 
     /* lista utenti */
     struct user* next;
@@ -113,7 +114,8 @@ struct session
     struct user* main; 
 
      /* client aggiuntivo */
-    struct user* secondary;
+    struct user* 
+    secondary;
 
     /* numero di token raccolti */
     int token_pickedUp; 
