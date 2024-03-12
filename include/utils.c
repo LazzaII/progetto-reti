@@ -111,8 +111,8 @@ void createUser(char* username, char* pwd)
 
     /* aggiunta in cima alla lista tanto non ci interessa l'ordine */
     if(users_list) {
-        u->next = users_list->next;
-        users_list->next = u;
+        u->next = users_list;
+        users_list = u;
     }
     else 
         users_list = u;
@@ -152,8 +152,8 @@ void createSession(int socket, int pos_set)
 
     /* aggiunta in cima alla lista tanto non ci interessa l'ordine */
     if(sessions) {
-        s->next = sessions->next;
-        sessions->next = s;
+        s->next = sessions;
+        sessions = s;
     }
     else 
         sessions = s;
@@ -186,11 +186,11 @@ struct session* getSession(int socket, char* type)
     for (tmp = sessions; tmp; tmp = tmp->next)
     {
         if(tmp->main->socket == socket){ /* giocatore principale */
-            strcpy(type, "MAIN");
+            type = "MAIN";
             break;
         }
         if(tmp->secondary->socket == socket){ /* giocatore secondario */
-            strcpy(type, "SEC");
+            type = "SEC";
             break;
         }
     }

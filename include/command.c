@@ -141,6 +141,7 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
             if(current_session == NULL) {
                 close(socket);
                 FD_CLR(socket, master);
+                logout(findUserFromSocket(socket)); /* non essendo loggato */
             }
             else
                 /* se va bene il formato chiamata al comando di handler */
@@ -301,7 +302,9 @@ void startHandler(struct mex message, int socket)
         else if(strcmp(message.opt2, "2") == 0) {
             s = firstFreeSession(1); /* 1 sta per Prison Break */
             if(s) {
+                printf("Qui ci arrrivo\n"); /* DEBUG */ 
                 s->secondary = findUserFromSocket(socket);
+                printf("anche Qui ci arrrivo\n"); /* DEBUG */
                 s->secondary->inGame = true; /* si mette in game il giocatore */
                 strcpy(buffer, "Il giocatore secondario è un secondino corrotto in attesa della chiamata del prigioniero.\n"
                                 "Potrebbe non essere mai chiamato in causa, la sua presenza non è necessaria per vincere.\n"

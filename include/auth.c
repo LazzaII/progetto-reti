@@ -66,8 +66,6 @@ void logout(struct user* user)
 {
     struct session* current, * prec;
 
-    /*TODO: il logout non fa logout*/
-
     /* se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client */
     for (current = sessions; current; current = current->next)
     {

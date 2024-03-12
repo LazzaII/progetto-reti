@@ -136,7 +136,9 @@ int main(int argc, char *argv[])
                 else {
                     memset(buffer, 0, DIM_BUFFER);
                     ret = recv(i, (void*)buffer, DIM_BUFFER, 0);
-                    current_session = getSession(i, type); 
+                    current_session = getSession(i, type);
+                    if(current_session == NULL)
+                        printf("qui è nulla\n"); /* debug */
                     /* potrebbe returnane NULL se non trova niente (qualsiasi cosa prima di aver fatto comando start)*/
 
                     if(ret == 0) {
