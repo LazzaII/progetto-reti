@@ -137,8 +137,6 @@ int main(int argc, char *argv[])
                     memset(buffer, 0, DIM_BUFFER);
                     ret = recv(i, (void*)buffer, DIM_BUFFER, 0);
                     current_session = getSession(i, type);
-                    if(current_session == NULL)
-                        printf("qui è nulla\n"); /* debug */
                     /* potrebbe returnane NULL se non trova niente (qualsiasi cosa prima di aver fatto comando start)*/
 
                     if(ret == 0) {
@@ -196,14 +194,12 @@ int main(int argc, char *argv[])
                           "Socket: %d\n"
                           "Risposta server: "
                           ,buffer, 
-                          current_session ? current_session->id : 0,
+                          current_session ? current_session->id : -1,
                           current_session ? current_session->set.name : "non in sessione", 
-                          current_session ? (strcmp(type, "MAIN") ? current_session->main->username : current_session->secondary->username) : "non in sessione", 
-                          i);
+                          current_session ? (strcmp(type, "MAIN") == 0 ? current_session->main->username : current_session->secondary->username) : "non in sessione", 
+                          i); 
                     commandSwitcher(i, buffer, type, current_session, &master);
                     printf("\n******************************************************\n\n");
-                    if(remainingTime(time(NULL)) != -1 && current_session) /* siamo in una partita attiva allora si inviano le info sulla sessione*/
-                        sendInfos(current_session, i);
                 }
             }
         } 

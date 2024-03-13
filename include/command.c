@@ -59,14 +59,39 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
 
     memset(buffer, 0, DIM_BUFFER);
 
-    /* TODO check fine tempo */
+    /* check fine tempo */
+    if(current_session && remainingTime(current_session->start_time) == -1){
+        strcpy(buffer, "Tempo scaduto, hai perso!\n");
+        send(socket, buffer, DIM_BUFFER, 0); 
+        printf("Il tempo è scaduto, terminata la partita");
 
-    /* TODO check riddle */
+        /* chiusura del socket principale*/
+        close(current_session->main->socket);
+        FD_CLR(current_session->main->socket, master);
+        logout(current_session->main);
 
-    /* TODO check chiamata */
+        /* invio della chiusura al secondo client */
+        if(current_session->secondary) {
+            strcpy(buffer, "Il client principale ha deciso di terminare la partita\n");
+            send(current_session->secondary->socket, buffer, DIM_BUFFER, 0);   
+            close(current_session->secondary->socket);
+            FD_CLR(current_session->secondary->socket, master);
+            logout(current_session->secondary);
+        }
 
+        /* eliminazione fisica della sessione */
+        free(current_session);
+    }
+    /* TODO controllo di un indovinello attivo*/
+    else if(current_session && current_session->active_riddle) {
+        riddleHandler(current_session);
+    } 
+    /* TODO controllo della comunicazione tra client*/
+    else if(current_session && current_session->active_call) {
+        callHandler(current_session);
+    }
     /* Switch dei comandi con relativa chiamata ai vari handler */
-    if(substringed_mex.ok == true) {
+    else if(substringed_mex.ok == true) {
         /* comandi di autenticazione */
         if(strcmp(substringed_mex.command, "signup") == 0) {
             /* se l'utente ha già fatto login non si può usare il comando signup */
@@ -162,6 +187,10 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
         send(socket, buffer, DIM_BUFFER, 0); 
         printf("Formato del comando inserito non valido");
     }
+
+    /* se siamo in una partita attiva allora si inviano le info sulla sessione*/
+    if(current_session && remainingTime(current_session->start_time) != -1) 
+        sendInfos(current_session, socket);
 }
 
 /**
@@ -244,6 +273,7 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
 
     memset(buffer, 0, DIM_BUFFER);
 
+    /* QUALCOSA NON FUNZIONA QUI*/
     /* nel caso di utente principale va chiusa la connessione ad entrambi i client */
     if(strcmp(type, "MAIN") == 0) {
         /* chiusura del socket principale*/
@@ -252,20 +282,27 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
         logout(current_session->main);
 
         /* invio della chiusura al secondo client */
-        strcpy(buffer, "Il client principale ha deciso di terminare la partita\n");
-        send(current_session->secondary->socket, buffer, DIM_BUFFER, 0);   
-        close(current_session->secondary->socket);
-        FD_CLR(current_session->secondary->socket, master);
-        logout(current_session->secondary);
+        if(current_session->secondary) {
+            strcpy(buffer, "\n *** Il client principale ha deciso di terminare la partita *** \n");
+            send(current_session->secondary->socket, buffer, DIM_BUFFER, 0);   
+            close(current_session->secondary->socket);
+            FD_CLR(current_session->secondary->socket, master);
+            logout(current_session->secondary);
+        }
 
         /* eliminazione fisica della sessione */
-        free(current_session);
+        if(sessions->next == NULL)
+            sessions = NULL;
+        else     
+            free(current_session);
+        
     }
-    /* nel caso di utente principale va chiusa solo la connessione del client secondario */
+    /* nel caso di utente secondario va chiusa solo la connessione del client secondario */
     else {
         close(current_session->secondary->socket);
         FD_CLR(current_session->secondary->socket, master);
         logout(current_session->secondary);
+        current_session->secondary = NULL;
     }   
 }
 
@@ -302,9 +339,7 @@ void startHandler(struct mex message, int socket)
         else if(strcmp(message.opt2, "2") == 0) {
             s = firstFreeSession(1); /* 1 sta per Prison Break */
             if(s) {
-                printf("Qui ci arrrivo\n"); /* DEBUG */ 
                 s->secondary = findUserFromSocket(socket);
-                printf("anche Qui ci arrrivo\n"); /* DEBUG */
                 s->secondary->inGame = true; /* si mette in game il giocatore */
                 strcpy(buffer, "Il giocatore secondario è un secondino corrotto in attesa della chiamata del prigioniero.\n"
                                 "Potrebbe non essere mai chiamato in causa, la sua presenza non è necessaria per vincere.\n"
@@ -313,9 +348,9 @@ void startHandler(struct mex message, int socket)
                 send(socket, buffer, DIM_BUFFER, 0); 
                 printf("Scenario Prison Break joinato, inviate indicazioni al giocatore secondario");
                 memset(buffer, 0, DIM_BUFFER);
-                strcpy(buffer, "*** Secondino disponbile... shhh ***");
+                strcpy(buffer, "\n *** Secondino disponbile... shhh ***\n");
                 send(s->main->socket, buffer, DIM_BUFFER, 0);
-                printf("Comunicazione di join inviata al personaggio principale");
+                printf(" - Comunicazione di join inviata al personaggio principale");
             }
             else { /* se non ci sono sessioni libere rimandiamo le istruzioni e ci aspettiamo una nuova start */
                 strcpy(buffer, "!ALERT!: Non ci sono sessioni libere al momento\n");
@@ -393,14 +428,29 @@ void sendInfos(struct session* current_session, int socket)
 
     memset(buffer, 0, DIM_BUFFER);
     /* valorizzaione delle info */
-    strcpy(buffer, "SESSION INFOS - Tempo rimanente: ");
-    sprintf("%s%d", buffer, remainingTime(current_session->start_time));
-    strcpy(buffer, "secondi , Token raccolti: ");
-    sprintf("%s%d", buffer, current_session->token_pickedUp);
-    strcpy(buffer, ", Token secondari raccolti: ");
-    sprintf("%s%d", buffer, current_session->secondary_token_pickedUp);
-    strcat(buffer, "\n");
-
+    sprintf(buffer, "\nSESSION INFOS - Tempo rimanente: %d "
+            "secondi , Token raccolti: %d" 
+            ", Token secondari raccolti: %d\n",
+            remainingTime(current_session->start_time), current_session->token_pickedUp, current_session->secondary_token_pickedUp);
     /* inivio al client */
     send(socket, buffer, DIM_BUFFER, 0); 
 }
+
+/**
+ * Funzione per gestire la rispota ad un quiz
+ * @param session* sessione in questione
+*/
+void riddleHandler(struct session* current_session)
+{
+    
+}
+
+/**
+ * Funzione per gestire lo scambio di messaggi tra i due client
+ * @param session* sessione in questione
+*/
+void callHandler(struct session* current_session)
+{
+
+}
+

@@ -106,7 +106,7 @@ struct location
 struct session
 {
     /* dati della sessione */
-    int id; /* per debug */
+    int id; /* per debug del server */
     struct set set; /* scenario scelto */
     time_t start_time; /* tempo di inizio*/
 

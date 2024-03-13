@@ -48,7 +48,7 @@ int remainingTime(time_t startTime)
     time_t current = time(NULL);
     int p = (int) difftime(current, startTime);
 
-    return p < MAX_TIME ? p : -1;
+    return p < MAX_TIME ? MAX_TIME - p : -1;
 }
 
 /**
@@ -140,7 +140,7 @@ void createSession(int socket, int pos_set)
     }
 
     s->start_time = time(NULL);
-    s->main = findUserFromSocket(socket); /* TODO: qualcosa non funziona qui dopo la prima start*/
+    s->main = findUserFromSocket(socket); 
     s->main->inGame = true; /* se si crea la sessione allora è iniziato il gioco */
     s->secondary = NULL;
     s->token_pickedUp = 0;
@@ -185,12 +185,12 @@ struct session* getSession(int socket, char* type)
 
     for (tmp = sessions; tmp; tmp = tmp->next)
     {
-        if(tmp->main->socket == socket){ /* giocatore principale */
-            type = "MAIN";
+        if(tmp->main && tmp->main->socket == socket){ /* giocatore principale */
+            strcpy(type, "MAIN");
             break;
         }
-        if(tmp->secondary->socket == socket){ /* giocatore secondario */
-            type = "SEC";
+        else if(tmp->secondary && tmp->secondary->socket == socket){ /* giocatore secondario */
+            strcpy(type, "SEC");
             break;
         }
     }

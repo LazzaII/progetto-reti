@@ -64,21 +64,24 @@ bool signup(char* username, char* pwd)
 */
 void logout(struct user* user) 
 {
-    struct session* current, * prec;
+    struct session* current, * prec = NULL;
 
     /* se è il client principale termina anche la sessione di gioco -> fa terminare anche l'altro client */
     for (current = sessions; current; current = current->next)
     {
         if(strcmp(current->main->username, user->username)) {
             /* elimina la sessione corrente (in maniera logica cioè viene solo tolta dalla lista) */
-            prec->next = current->next;
+            if(prec)
+                prec->next = current->next;
             break;
         }
         prec = current;
     }
 
-    /* client (main o aggiuntivo) messo offline */
-    user->logged = false;
-    user->socket = -1;
-    user->inGame = false;
+    if(user) { /* non il miglior modo ma almeno non gestiamo due casi diversi per loggati e non loggati */
+        /* client (main o aggiuntivo) messo offline */
+        user->logged = false;
+        user->socket = -1;
+        user->inGame = false;
+    }
 }

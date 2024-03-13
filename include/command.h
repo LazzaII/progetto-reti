@@ -30,12 +30,13 @@ void takeHandler(struct mex message, int socket);
 void useHandler(struct mex message, int socket);
 void objsHandler(struct mex message, int socket, struct session* current_session);
 
+void riddleHandler(struct session* current_session); /* per gestire la risposta quando è stato attivato un quiz */
+void callHandler(struct session* current_session); /* per gesitre l'interazione tra i due giocatori */
+
 void sendInfos(struct session* current_session, int socket); /* al termine di ogni messaggio si inviano le info sulla partita, tempo rimanente e token raccolti*/
 
 #endif
 
 /*
 Dopo aver fatto il login non deve essere più disponibile il comando register e signup (da bloccare lato server)
-
-Aggiungere nella documentazione il comando choose e spiegarlo per bene 
 */
