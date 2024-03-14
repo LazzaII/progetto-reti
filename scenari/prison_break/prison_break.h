@@ -10,4 +10,9 @@
 
 extern struct set prison_break;
 
+/* handler specifici dello scenario */
+void lookHandlerPB(struct mex message, int socket, struct session* current_session); 
+void takeHandlerPB(struct mex message, int socket, struct session* current_session);
+void useHandlerPB(struct mex message, int socket, struct session* current_session);
+
 #endif

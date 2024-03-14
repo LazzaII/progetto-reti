@@ -133,24 +133,62 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
         }
         /* comandi di gioco */
         else if (strcmp(substringed_mex.command, "look") == 0) {
-        
+            /* si controlla se ha usato il comando start*/
+            if(current_session)
+                lookHandler(substringed_mex, socket, current_session);
+            /* controlliamo se è un giocatore secondario che nel caso non può usarlo */
+            else if(strcmp(type, "SEC") == 0) {
+                strcpy(buffer, "Comando non disponbile da giocatore secondario\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Comando non disponbile da giocatore secondario");
+            }
+            else {
+                strcpy(buffer, "Per usare questo comando devi prima avviare una partita\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Comando ancora non disponibile");
+            }
         }
         else if (strcmp(substringed_mex.command, "take") == 0) {
-        
+            /* si controlla se ha usato il comando start*/
+            if(current_session)
+                takeHandler(substringed_mex, socket, current_session);
+            /* controlliamo se è un giocatore secondario che nel caso non può usarlo */
+            else if(strcmp(type, "SEC") == 0) {
+                strcpy(buffer, "Comando non disponbile da giocatore secondario\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Comando non disponbile da giocatore secondario");
+            }
+            else {
+                strcpy(buffer, "Per usare questo comando devi prima avviare una partita\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Comando ancora non disponibile");
+            }
         }
         else if (strcmp(substringed_mex.command, "use") == 0) {
-        
+            /* si controlla se ha usato il comando start*/
+            if(current_session)
+                useHandler(substringed_mex, socket, current_session);
+            /* controlliamo se è un giocatore secondario che nel caso non può usarlo */
+            else if(strcmp(type, "SEC") == 0) {
+                strcpy(buffer, "Comando non disponbile da giocatore secondario\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Comando non disponbile da giocatore secondario");
+            }
+            else {
+                strcpy(buffer, "Per usare questo comando devi prima avviare una partita\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Comando ancora non disponibile");
+            }
         }
         else if (strcmp(substringed_mex.command, "objs") == 0) {
             /* controllo che il giocatore che ha usato objs sia il principale */
-            if(strcmp(type, "SEC")) {
+            if(strcmp(type, "SEC") == 0) {
                 strcpy(buffer, "Comando non valido da giocatore secondario\n");
                 send(socket, buffer, DIM_BUFFER, 0); 
                 printf("Comando non valido da giocatore secondario");
             }
             else 
                 objsHandler(substringed_mex, socket, current_session);
-
         }
         /* comando di terminazione */
         else if (strcmp(substringed_mex.command, "end") == 0) {
@@ -318,6 +356,8 @@ void startHandler(struct mex message, int socket)
 
     memset(buffer, 0, DIM_BUFFER);
 
+    /* printf("*** DENTRO HANDLER ***\n"); */
+
     /* si controlla il formato del messaggio */
     if(message.opt1 == NULL || message.opt2 == NULL){
         strcpy(buffer, "Compilare correttamente i campi: start num tipo\n");
@@ -372,6 +412,66 @@ void startHandler(struct mex message, int socket)
         strcpy(buffer, "Compilare correttamente i campi del comando start: scenario non esistente \n");
         send(socket, buffer, DIM_BUFFER, 0); 
         printf("Comando inserito riconosciuto ma campi non compilati correttamente");
+    }
+}
+
+/**
+ * Funzione look che richiama l'handler dello scenario scelto.
+ * @param message messaggio inviato dall'utente
+ * @param socket socket a cui inviare le comunicazioni
+ * @param session* sessione corrente
+*/
+void lookHandler(struct mex message, int socket, struct session* current_session)
+{
+    /* switch per andare all'handler dello scenario
+    i controlli infatti vengono fatti lì perchè ogni scenario potrebbe avere cose diverse*/
+    switch (current_session->set.id)
+    {
+    case 1:
+        lookHandlerPB(message, socket, current_session);
+        break;
+    
+    /* aggiungere gli altri scenari qui*/
+    }
+}
+
+/**
+ * Funzione take che richiama l'handler dello scenario scelto.
+ * @param message messaggio inviato dall'utente
+ * @param socket socket a cui inviare le comunicazioni
+ * @param session* sessione corrente
+*/
+void takeHandler(struct mex message, int socket, struct session* current_session)
+{
+    /* switch per andare all'handler dello scenario
+    i controlli infatti vengono fatti lì perchè ogni scenario potrebbe avere cose diverse*/
+    switch (current_session->set.id)
+    {
+    case 1:
+        takeHandlerPB(message, socket, current_session);
+        break;
+    
+    /* aggiungere gli altri scenari qui*/
+    }
+}
+
+/**
+ * Funzione use che richiama l'handler dello scenario scelto.
+ * @param message messaggio inviato dall'utente
+ * @param socket socket a cui inviare le comunicazioni
+ * @param session* sessione corrente
+*/
+void useHandler(struct mex message, int socket, struct session* current_session)
+{
+    /* switch per andare all'handler dello scenario
+    i controlli infatti vengono fatti lì perchè ogni scenario potrebbe avere cose diverse*/
+    switch (current_session->set.id)
+    {
+    case 1:
+        useHandlerPB(message, socket, current_session);
+        break;
+    
+    /* aggiungere gli altri scenari qui*/
     }
 }
 

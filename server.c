@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
                         continue;
                     }
                     printf("! Chiusura del server...\n\n");
-                    if(gameOn()) { /* se è presente una partita non termino */
+                    if(gameOn() == true) { /* se è presente una partita non termino */
                         printf("WARN: Impossibile terminare il server, il gioco è in corso.\n"
                                 "******************************************************\n");
                         continue;

@@ -133,7 +133,7 @@ void createSession(int socket, int pos_set)
     /* valorizzazione dello scenario */
     switch (pos_set)
     {
-        case 1:
+        case 1: /* 1 -> Prison Break*/
             s->set = prison_break;
             break;
         /* aggiungere gli altri scenari qui*/

@@ -25,9 +25,9 @@ void endHandler(struct session* current_session, char* type, fd_set* master); /*
 
 void startHandler(struct mex message, int socket); /* formato del comando start cambiato, start num tipo*/
 
-void lookHandler(struct mex message, int socket); /* opt può essere null nel caso dello scenario, altrimenti può essere una location o un oggetto */
-void takeHandler(struct mex message, int socket);
-void useHandler(struct mex message, int socket);
+void lookHandler(struct mex message, int socket, struct session* current_session); /* opt può essere null nel caso dello scenario, altrimenti può essere una location o un oggetto */
+void takeHandler(struct mex message, int socket, struct session* current_session);
+void useHandler(struct mex message, int socket, struct session* current_session);
 void objsHandler(struct mex message, int socket, struct session* current_session);
 
 void riddleHandler(struct session* current_session); /* per gestire la risposta quando è stato attivato un quiz */
