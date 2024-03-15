@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     printf("OK: Client inizializzato\n\n");
 
     printf("******************* CLIENT AVVIATO *******************\n");
-    memset(buffer, 0, sizeof(buffer));
+    memset(buffer, 0, DIM_BUFFER);
     /* Ricezione del messaggio iniziale con le istruzioni*/
     ret = recv(fdmax, buffer, DIM_BUFFER, 0);
     if(ret < 0){

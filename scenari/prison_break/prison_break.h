@@ -2,6 +2,8 @@
 #define PRISONBREAK_C
 
 #include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
 #include "../../include/structure.h"
 
 #define DIM_RIDDLES_PB 2

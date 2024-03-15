@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
                         current_user = strcmp(type, "MAIN") == 0 ? current_session->main : current_session->secondary;
                         printf("******************************************************\n"
                               "! Sconnessione socket %d in corso...\n"
-                              "! Eliminazione utente: %s", i, current_user->username);
+                              "! Eliminazione utente: %s\n", i, current_user->username);
                         logout(current_user);
                         close(i);
                         printf("Socket %d chiuso.\n", i);
@@ -169,17 +169,20 @@ int main(int argc, char *argv[])
                                
                         /* se il client è principale va disconnesso anche il client secondario*/
                         if(strcmp(type, "MAIN") == 0) {
-                            printf("Disconessione altro giocatore..."
-                                    "! Sconnessione socket %d in corso...\n"
-                                    "! Eliminazione utente: %s", current_session->secondary->socket, current_session->secondary->username);
-                            close(current_session->secondary->socket);
-                            printf("OK: Socket %d chiuso.\n", current_session->secondary->socket);
-                            FD_CLR(current_session->secondary->socket, &master);
-                            printf("OK: Socket %d rimosso dal set dei descrittori.\n"
-                                    "OK: Disconnessione client secondario eseguita con successo.\n\n", current_session->secondary->socket);
-                            printf("! Eliminazione della sessione");
-                            free(current_session); /* è già stata rimossa dalla lista nel login, manca solo da liberare lo spazio*/
-                            printf("OK: Sessione eliminata con successo");
+                            if(current_session->secondary) {
+                                printf("Disconessione altro giocatore...\n"
+                                        "! Sconnessione socket %d in corso...\n"
+                                        "! Eliminazione utente: %s\n", current_session->secondary->socket, current_session->secondary->username);
+                                close(current_session->secondary->socket);
+                                printf("OK: Socket %d chiuso.\n", current_session->secondary->socket);
+                                FD_CLR(current_session->secondary->socket, &master);
+                                printf("OK: Socket %d rimosso dal set dei descrittori.\n"
+                                        "OK: Disconnessione client secondario eseguita con successo.\n\n", current_session->secondary->socket);
+                                printf("! Eliminazione della sessione\n");
+                                logout(current_session->secondary); 
+                            }
+                            current_session = NULL; /* è già stata rimossa dalla lista nel login, manca solo da liberare lo spazio*/
+                            printf("OK: Sessione eliminata con successo\n");
                         }
                         printf("SUCCES: Disconessione eseguita con successo\n"
                                 "******************************************************\n\n");

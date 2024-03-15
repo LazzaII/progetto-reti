@@ -5,6 +5,7 @@
 
 #define MAX_OBJ_LOC 2
 #define MAX_LOC_SET 3
+#define DIM_BUFFER 1024 /* grandezza buffer di client e server */
 
 /**
  * Tipo bool definito visto che non è presente di base in c
@@ -66,6 +67,7 @@ struct object
     bool used; /* se è stato utilizzato e non può essere più utilizzato (ex. use telefono sapone = bomba dopo non si può più usare telefono e sapone) */
     bool found; /* se la location è stata scoperta, per evitare chiamate a caso senza "scoprire" la stanza */
     bool is_token; /* se rappresenta un token */
+    bool is_secondary_token; /* se rappresenta un token */
 
     struct riddle* riddle; /* nel caso l'oggetto sia bloccato da un enigma */
 };
@@ -78,7 +80,7 @@ struct set
     /* dati dello scenario */
     int id; /* codice da digitare da parte del client */
     char* name;
-    char* description;
+    char* description; /* per look senza paramentri */
 
     /* location dello scenario */
     struct location* locations;
