@@ -3,10 +3,10 @@
 /* INIZIALIZZAZIONE DELLE STRUTTURE */
 struct riddle riddles[DIM_RIDDLES_PB] = {
     {
-        "Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono?",
+        "Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono?\n",
         "Tempo di Anna", /* soluzione */
         0,
-        "Costruire una bomba è molto facile, hai provato con il t----on- e il s--o--?"
+        "Costruire una bomba è molto facile, hai provato con il t----on- e il s--o--?\n"
     },
     {
         "Il codice del lucchetto è il continuo di questa sequenza.\n"
@@ -16,15 +16,15 @@ struct riddle riddles[DIM_RIDDLES_PB] = {
         "111221\n",
         "312211", /* soluzione */
         0,
-        "Dentro la scatola c'è del **sapone** e altre **monete3**."
+        "Dentro la scatola c'è del **sapone** e altre **monete3**.\n"
     },
 };
 
 struct object objects[DIM_OBJECTS_PB] = {
     { /* 0 */
         "McLovin",
-        "McLovin è un ex chimico, forse può esserti utile.",
-        "Vuoi provare a scappare? Va bene, ti aiuterò solo a patto di rispondermi ad un indovinello.",
+        "McLovin è un ex chimico, forse può esserti utile.\n",
+        "Vuoi provare a scappare? Va bene, ti aiuterò solo a patto di rispondermi ad un indovinello.\n",
         0,
         0,
         1, 
@@ -34,8 +34,8 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 1 */
         "telefono",
-        "Sul numero di telefono è salvato un solo numero.",
-        "Chiamo il numero salvato. Biiiip. Biiiip.",
+        "Sul numero di telefono è salvato un solo numero.\n",
+        "Chiamo il numero salvato...\n Biiiip. Biiiip.\n",
         0,
         0,
         0, 
@@ -45,8 +45,8 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 2 */
         "monete1",
-        "Sono delle monete d'oro.",
-        "É uscita testa.",
+        "Sono delle monete d'oro.\n",
+        "É uscita testa.\n",
         0,
         0,
         0, 
@@ -56,8 +56,8 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 3 */
         "scatola",
-        "La scatola sembra chiusa.",
-        "É bloccata da un lucchetto a sono 6 cifre.",
+        "La scatola sembra chiusa.\n",
+        "É bloccata da un lucchetto a sono 6 cifre.\n",
         0,
         0,
         0, 
@@ -67,8 +67,8 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 4 */
         "monete2",
-        "Sono delle monete d'oro.",
-        "É uscita croce.",
+        "Sono delle monete d'oro.\n",
+        "É uscita croce.\n",
         0,
         0,
         0, 
@@ -78,8 +78,8 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 5 */
         "sapone",
-        "Bagnodoccia Vidal, tutto in uno!",
-        "Ancora non è il momento di lavarsi.",
+        "Bagnodoccia Vidal, tutto in uno!\n",
+        "Ancora non è il momento di lavarsi.\n",
         0,
         0,
         0, 
@@ -89,8 +89,8 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 6 */
         "monete3",
-        "Sono delle monete d'oro.",
-        "É uscita croce.",
+        "Sono delle monete d'oro.\n",
+        "É uscita croce.\n",
         0,
         0,
         0, 
@@ -100,8 +100,8 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 7 */
         "sbarre",
-        "Non sembrano così resistenti...",
-        "Non sono resistenti ma provare ad aprirle a mano è troppo forse.",
+        "Non sembrano così resistenti...\n",
+        "Non sono resistenti ma provare ad aprirle a mano è troppo forse.\n",
         0,
         0,
         0, 
@@ -111,8 +111,8 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 8 */
         "bomba",
-        "Guarda cosa si può fare con del semplice sapone e delle batterie.",
-        "Sei folle?! Così ci farai saltare tutti in aria!",
+        "Guarda cosa si può fare con del semplice sapone e delle batterie.\n",
+        "Sei folle?! Così ci farai saltare tutti in aria!\n",
         0,
         0,
         0, 
@@ -282,6 +282,54 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
 */
 void useHandlerPB(struct mex message, int socket, struct session* current_session)
 {
+    char buffer[DIM_BUFFER];
+    
+    memset(buffer, 0, DIM_BUFFER);
 
+    /* TODO: va aggiunto in tutti il controllo se è stato scoperto e raccolto */
+    /* switch degli use, ad ogni comando è associato qualcosa di diverso con diverse sfumature*/
+    if(strcmp(message.opt1, "McLovin") == 0) {
+        /* attivare quiz */
+
+    }
+    else if(strcmp(message.opt1, "telefono") == 0) {
+        /* controllo per chiamata al secondo utente */
+
+        /* si può creare la bomba telefono sapone */
+
+    }
+    else if(strcmp(message.opt1, "monete1") == 0) {
+        strcpy(buffer, objects[2].use_description);
+    }
+    else if(strcmp(message.opt1, "scatola") == 0) {
+        /* attivare quiz */
+
+    }
+    else if(strcmp(message.opt1, "moente2") == 0) {
+        strcpy(buffer, objects[4].use_description);
+    }
+    else if(strcmp(message.opt1, "sapone") == 0) {
+        /* si può creare la bomba sapone telefono */
+    
+    }
+    else if(strcmp(message.opt1, "monete3") == 0) {
+        strcpy(buffer, objects[6].use_description);
+
+
+    }
+    else if(strcmp(message.opt1, "sbarre") == 0) {
+        /* controllare la vittoria sbarre bomba */
+    
+    }
+    else if(strcmp(message.opt1, "bomba") == 0) {
+        /* controllare la vittoria bomba sbarre */
+
+    }
+    else 
+        strcpy(buffer, "Comando use usato in maniera non valida, potrebbe essere dovuto al formato sbagliato oppure ad aver utilizzato il comando con oggetti non raccolti\n");
+   
+    /* se arriviamo qui il comando use non è valido*/
+    send(socket, buffer, DIM_BUFFER, 0); 
+    printf("Usato comando use");
 }
 
