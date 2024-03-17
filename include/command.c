@@ -311,7 +311,7 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
 
     memset(buffer, 0, DIM_BUFFER);
 
-    /* QUALCOSA NON FUNZIONA QUI*/
+    /* TODO: QUALCOSA NON FUNZIONA QUI*/
     /* nel caso di utente principale va chiusa la connessione ad entrambi i client */
     if(strcmp(type, "MAIN") == 0) {
         /* chiusura del socket principale*/
@@ -337,6 +337,9 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
     }
     /* nel caso di utente secondario va chiusa solo la connessione del client secondario */
     else {
+        strcpy(buffer, "\n *** Secondino non più disponibile *** \n");
+        send(current_session->main->socket, buffer, DIM_BUFFER, 0);  
+
         close(current_session->secondary->socket);
         FD_CLR(current_session->secondary->socket, master);
         logout(current_session->secondary);
@@ -355,8 +358,6 @@ void startHandler(struct mex message, int socket)
     struct session* s;
 
     memset(buffer, 0, DIM_BUFFER);
-
-    /* printf("*** DENTRO HANDLER ***\n"); */
 
     /* si controlla il formato del messaggio */
     if(message.opt1 == NULL || message.opt2 == NULL){

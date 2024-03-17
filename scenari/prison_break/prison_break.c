@@ -217,11 +217,69 @@ void lookHandlerPB(struct mex message, int socket, struct session* current_sessi
     }
 } 
 
+/**
+ * Funzione specifica pe il comando take dello scenario Prison Break
+ * @param message messaggio inviato dall'utente
+ * @param socket socket a cui inviare le comunicazioni
+ * @param session* sessione corrente
+*/
 void takeHandlerPB(struct mex message, int socket, struct session* current_session)
 {
+    int i;
+    char buffer[DIM_BUFFER];
+    
+    memset(buffer, 0, DIM_BUFFER);
 
+    /* controllo se il messaggio è nel formato corretto */
+    if(message.opt1 != NULL && message.opt2 == NULL) {
+        /* controllo su McLovin */
+        if(strcmp(message.opt1, "McLovin") == 0) {
+            strcpy(buffer, "Non è possibile fare take su questo oggetto\n");
+            send(socket, buffer, DIM_BUFFER, 0); 
+            printf("Comando take su oggetto non valido");
+            return;
+        }
+
+        /* controllo degli oggetti */
+        for (i = 0; i < DIM_OBJECTS_PB; i++)
+        {
+            if(strcmp(objects[i].name, message.opt1) == 0 && objects[i].found == true) {
+                /* se l'oggetto è corretto si invia la risposta e si prende l'oggetto oggetti */
+                if(objects[i].is_token == true) {
+                    strcpy(buffer, "Oggetto raccolto, era pure un token\n");
+                    current_session->token_pickedUp++;
+                } 
+                else if(objects[i].is_secondary_token == true) {
+                    strcpy(buffer, "Oggetto raccolto, era pure un token secondario\n");
+                    current_session->secondary_token_pickedUp++;
+                }
+                else 
+                    strcpy(buffer, "Oggetto raccolto\n");
+
+                current_session->set.objs[i].pickedUp = true;
+
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Comando take sugli oggetti");
+                
+                return;
+            }
+
+        }
+    }
+    /* formato per il comando take non valido */
+    else {
+        strcpy(buffer, "Formato per take non valido: take obj\n");
+        send(socket, buffer, DIM_BUFFER, 0); 
+        printf("Formato del comando look non valido");
+    }
 }
 
+/**
+ * Funzione specifica pe il comando use dello scenario Prison Break
+ * @param message messaggio inviato dall'utente
+ * @param socket socket a cui inviare le comunicazioni
+ * @param session* sessione corrente
+*/
 void useHandlerPB(struct mex message, int socket, struct session* current_session)
 {
 

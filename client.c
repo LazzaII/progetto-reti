@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
+#include "include/structure.h"
 
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 4242
@@ -21,9 +22,9 @@ int main(int argc, char *argv[])
     struct sockaddr_in sv_addr;
     in_port_t porta = htons(SERVER_PORT);
 
-    /* P principale - S secondario - A attivi a rispondere - N non settato*/
-    char type[2];
-    strcpy(type, "N"); 
+    char choosenSet[2];
+    /* per bloccare l'invio dei mex in caso di giocatore secondario */
+    bool canSend = true;
 
     printf("! Avvio e inizializzazione del client in corso...\n\n");
     fdmax = socket(AF_INET, SOCK_STREAM, 0);
@@ -73,8 +74,8 @@ int main(int argc, char *argv[])
                 if(i == STDIN_FILENO) {
                     memset(buffer, 0, DIM_BUFFER);
                     fgets(buffer, DIM_BUFFER, stdin);
-                    /* se siamo giocatori secondari */
-                    if(strcmp(type, "S") == 0) {
+                    /* se siamo giocatori secondari e non usiamo il comando end*/
+                    if(canSend == false  && strstr(buffer, "end") == NULL) {
                         printf("Ancora non sei stato interpellato dal giocatore principale\n");
                         continue;
                     }
@@ -93,12 +94,12 @@ int main(int argc, char *argv[])
                     il client secondario deve interagire solo quando viene chiamata*/
                     if(strstr(buffer, "start") != NULL) {
                         strtok(buffer, " "); 
-                        strtok(NULL, " "); 
-                        strtok(NULL, " ");
-                        if(strcmp(buffer, "2") == 0) 
-                            strcpy(type, "S"); 
+                        strcpy(choosenSet, strtok(NULL, " "));
+                        strcpy(buffer, strtok(NULL, " "));
+                        if(strcmp(buffer, "2") == 0)
+                            canSend = false;
                         else 
-                            strcpy(type, "P"); 
+                            canSend = true;    
                     }
                     
                 }
@@ -117,10 +118,21 @@ int main(int argc, char *argv[])
                         exit(1);
                     }
 
-                    /* TODO: sbloccare client quando c'è la chiamata
-                    if() {
+                    /* reset del canSend in caso di chiamata in corso*/
+                    if(strcmp(buffer, "chiamata in corso") == 0) {
+                        canSend = true;
+                        if(strcmp(choosenSet, "1") == 0) /* Prison Break*/
+                            printf("\nUn prigioniero ti sta chiamando, quanti solti gli vuoi chiedere?\n");
+                        /*else if(...) per gli altri scenari */
+                    }  
 
-                    }  */
+                    /* nel caso di campo compilato non corretto si resetta sempre il canSend*/
+                    if(strstr(buffer, "scenario non esistente") != NULL
+                        || strstr(buffer, "giocatore inserito non esistente") != NULL
+                        || strstr(buffer, "ALERT") != NULL) {
+
+                        canSend = true;
+                    }
 
                     printf("%s\n", buffer);
                 }

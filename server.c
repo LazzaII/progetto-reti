@@ -140,6 +140,8 @@ int main(int argc, char *argv[])
                     /* potrebbe returnane NULL se non trova niente (qualsiasi cosa prima di aver fatto comando start)*/
 
                     if(ret == 0) {
+                        /*TODO: in qualche modo non chiude per bene la sessione perchè gameOn non fa niente*/
+
                         /* se il client ancora non è entrato in nessuna sessione */
                         if(current_session == NULL) {
                             printf("******************************************************\n"
