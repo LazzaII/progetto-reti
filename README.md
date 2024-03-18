@@ -35,7 +35,7 @@ make
 
 ## Tema
 
-Era necessario implementare almeno uno scenario e scrivere il codice in maniera che fosse facilmente implementabili altri scenari, per questo motivo ho deciso di implementare una sola scena: "Prison Break"
+Era necessario implementare almeno uno scenario per l'escape room e scrivere il codice in maniera che fossero facilmente implementabili altri scenari, per questo motivo ho deciso di implementare una sola scena: "Prison Break"
 
 ### Prison Break
 
@@ -117,7 +117,7 @@ Sei in prigione. Ti trovi sul \+\+letto\+\+, davanti a te c'è uno \+\+scaffale\
 
 Il client aggiuntivo è un secondo partecipante alla escape room che ha il ruolo di secondino corrotto. Ti fa uscire se hai abbastanza soldi, può decidere quanto costa l'uscita da un minimo di 1 e max di 3.
 
-IL client aggiuntivo può decidere a quale sessione può collegarsi
+Il client aggiuntivo viene inserito nella prima partita disponibile.
 
 #### Soluzioni Enigmi
 
