@@ -129,6 +129,8 @@ int main(int argc, char *argv[])
                     /* nel caso di campo compilato non corretto si resetta sempre il canSend*/
                     if(strstr(buffer, "scenario non esistente") != NULL
                         || strstr(buffer, "giocatore inserito non esistente") != NULL
+                        || strstr(buffer, "devi prima fare login") != NULL 
+                        || strstr(buffer, "devi prima avviare una partita") != NULL
                         || strstr(buffer, "ALERT") != NULL) {
 
                         canSend = true;

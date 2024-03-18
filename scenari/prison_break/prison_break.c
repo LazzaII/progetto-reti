@@ -111,7 +111,7 @@ struct object objects[DIM_OBJECTS_PB] = {
     },
     { /* 8 */
         "bomba",
-        "Guarda cosa si può fare con del semplice sapone e delle batterie.\n",
+        "Hai costruito **bomba**. Guarda cosa si può fare con del semplice sapone e delle batterie.\n",
         "Sei folle?! Così ci farai saltare tutti in aria!\n",
         0,
         0,
@@ -279,10 +279,12 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
  * @param message messaggio inviato dall'utente
  * @param socket socket a cui inviare le comunicazioni
  * @param session* sessione corrente
+ * @return booleano per controllare la vittoria
 */
-void useHandlerPB(struct mex message, int socket, struct session* current_session)
+bool useHandlerPB(struct mex message, int socket, struct session* current_session)
 {
     char buffer[DIM_BUFFER];
+    bool win = false;
     
     memset(buffer, 0, DIM_BUFFER);
 
@@ -293,9 +295,17 @@ void useHandlerPB(struct mex message, int socket, struct session* current_sessio
 
     }
     else if(strcmp(message.opt1, "telefono") == 0) {
-        /* controllo per chiamata al secondo utente */
-
         /* si può creare la bomba telefono sapone */
+        if(strcmp(message.opt2, "sapone") == 0) {
+            strcpy(buffer, objects[8].description);
+            objects[8].found = true;
+        }
+        /* controllo per chiamata al secondo utente */
+        /* else if ()
+        {
+            
+        } */
+        else strcpy(buffer, objects[1].use_description);
 
     }
     else if(strcmp(message.opt1, "monete1") == 0) {
@@ -310,20 +320,30 @@ void useHandlerPB(struct mex message, int socket, struct session* current_sessio
     }
     else if(strcmp(message.opt1, "sapone") == 0) {
         /* si può creare la bomba sapone telefono */
+        if(strcmp(message.opt2, "telefono") == 0) {
+            strcpy(buffer, objects[8].description);
+            objects[8].found = true;
+        }
+        else strcpy(buffer, objects[5].use_description);
     
     }
     else if(strcmp(message.opt1, "monete3") == 0) {
         strcpy(buffer, objects[6].use_description);
-
-
     }
+    /* coi prossimi due oggetti si controlla se si è vinto*/
     else if(strcmp(message.opt1, "sbarre") == 0) {
-        /* controllare la vittoria sbarre bomba */
-    
+        if(strcmp(message.opt2, "bomba") == 0) {
+            strcpy(buffer, "*** Complimenti sei riuscito ad evadere! Hai completato l'escape room! ***\n");
+            win = true;
+        }
+        else strcpy(buffer, objects[7].use_description);
     }
     else if(strcmp(message.opt1, "bomba") == 0) {
-        /* controllare la vittoria bomba sbarre */
-
+        if(strcmp(message.opt2, "sbarre") == 0) {
+            strcpy(buffer, "*** Complimenti sei riuscito ad evadere! Hai completato l'escape room! ***\n");
+            win = true;
+        }
+        else strcpy(buffer, objects[8].use_description);
     }
     else 
         strcpy(buffer, "Comando use usato in maniera non valida, potrebbe essere dovuto al formato sbagliato oppure ad aver utilizzato il comando con oggetti non raccolti\n");
@@ -331,5 +351,6 @@ void useHandlerPB(struct mex message, int socket, struct session* current_sessio
     /* se arriviamo qui il comando use non è valido*/
     send(socket, buffer, DIM_BUFFER, 0); 
     printf("Usato comando use");
+    return win;
 }
 

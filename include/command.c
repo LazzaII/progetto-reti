@@ -167,7 +167,7 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
         else if (strcmp(substringed_mex.command, "use") == 0) {
             /* si controlla se ha usato il comando start*/
             if(current_session)
-                useHandler(substringed_mex, socket, current_session);
+                useHandler(substringed_mex, socket, current_session, master);
             /* controlliamo se è un giocatore secondario che nel caso non può usarlo */
             else if(strcmp(type, "SEC") == 0) {
                 strcpy(buffer, "Comando non disponbile da giocatore secondario\n");
@@ -461,18 +461,45 @@ void takeHandler(struct mex message, int socket, struct session* current_session
  * @param message messaggio inviato dall'utente
  * @param socket socket a cui inviare le comunicazioni
  * @param session* sessione corrente
+ * @param fd_set*
 */
-void useHandler(struct mex message, int socket, struct session* current_session)
+void useHandler(struct mex message, int socket, struct session* current_session, fd_set* master)
 {
+    char buffer[DIM_BUFFER];
+    bool win = false;
+    memset(buffer, 0, DIM_BUFFER);
+    
     /* switch per andare all'handler dello scenario
     i controlli infatti vengono fatti lì perchè ogni scenario potrebbe avere cose diverse*/
     switch (current_session->set.id)
     {
     case 1:
-        useHandlerPB(message, socket, current_session);
+        win = useHandlerPB(message, socket, current_session);
         break;
     
     /* aggiungere gli altri scenari qui*/
+    }
+
+    /* controllo della vittoria */
+    if(win == true) {
+        printf("\n *** ESCAPE ROOM FINITA - chiusura della sessione di gioco ***");
+
+        /* chiusura della sessione */
+        close(current_session->main->socket);
+        FD_CLR(current_session->main->socket, master);
+        logout(current_session->main);
+
+        /* invio della chiusura al secondo client */
+        if(current_session->secondary) {
+            strcpy(buffer, "Il giocatore principale ha vinto la partita senza il tuo aiuto!\n");
+            send(current_session->secondary->socket, buffer, DIM_BUFFER, 0);   
+            close(current_session->secondary->socket);
+            FD_CLR(current_session->secondary->socket, master);
+            logout(current_session->secondary);
+        }
+
+        /* eliminazione fisica della sessione */
+        free(current_session);
     }
 }
 
@@ -508,7 +535,7 @@ void objsHandler(struct mex message, int socket, struct session* current_session
     for (; i < max; i++)
     {
         if(objs[i].pickedUp == true) {
-            strcat(buffer, "\t-");
+            strcat(buffer, "\t- ");
             strcat(buffer, objs[i].name); 
             strcat(buffer, "\n");
         }
