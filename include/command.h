@@ -30,8 +30,8 @@ void takeHandler(struct mex message, int socket, struct session* current_session
 void useHandler(struct mex message, int socket, struct session* current_session, fd_set* master);
 void objsHandler(struct mex message, int socket, struct session* current_session);
 
-void riddleHandler(struct session* current_session); /* per gestire la risposta quando è stato attivato un quiz */
-void callHandler(struct session* current_session); /* per gesitre l'interazione tra i due giocatori */
+void riddleHandler(struct mex message, struct session* current_session); /* per gestire la risposta quando è stato attivato un quiz */
+void callHandler(struct mex message, struct session* current_session); /* per gesitre l'interazione tra i due giocatori */
 
 void sendInfos(struct session* current_session, int socket); /* al termine di ogni messaggio si inviano le info sulla partita, tempo rimanente e token raccolti*/
 

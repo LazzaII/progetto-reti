@@ -17,4 +17,7 @@ void lookHandlerPB(struct mex message, int socket, struct session* current_sessi
 void takeHandlerPB(struct mex message, int socket, struct session* current_session);
 bool useHandlerPB(struct mex message, int socket, struct session* current_session);
 
+void riddleHandlerPB(struct mex message, struct session* current_session);
+void callHandlerPB(struct mex message, struct session* current_session);
+
 #endif

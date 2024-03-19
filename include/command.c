@@ -54,8 +54,8 @@ void commandList(char* buffer)
 */
 void commandSwitcher(int socket, char *message, char* type, struct session* current_session, fd_set* master)
 {
-    struct mex substringed_mex = substringMessage(message); 
     char buffer[DIM_BUFFER];
+    struct mex substringed_mex = substringMessage(message); 
 
     memset(buffer, 0, DIM_BUFFER);
 
@@ -82,13 +82,13 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
         /* eliminazione fisica della sessione */
         free(current_session);
     }
-    /* TODO controllo di un indovinello attivo*/
-    else if(current_session && current_session->active_riddle) {
-        riddleHandler(current_session);
+    /* controllo di un indovinello attivo*/
+    else if(current_session && current_session->active_riddle && strcmp(substringed_mex.command, "end") != 0) {
+        riddleHandler(substringed_mex, current_session);
     } 
     /* TODO controllo della comunicazione tra client*/
-    else if(current_session && current_session->active_call) {
-        callHandler(current_session);
+    else if(current_session && current_session->active_call && strcmp(substringed_mex.command, "end") != 0) {
+        callHandler(substringed_mex, current_session);
     }
     /* Switch dei comandi con relativa chiamata ai vari handler */
     else if(substringed_mex.ok == true) {
@@ -566,19 +566,37 @@ void sendInfos(struct session* current_session, int socket)
 
 /**
  * Funzione per gestire la rispota ad un quiz
+ * @param message risposta inviata
  * @param session* sessione in questione
 */
-void riddleHandler(struct session* current_session)
+void riddleHandler(struct mex message, struct session* current_session)
 {
+    /* switch per andare all'handler dello scenario */
+    switch (current_session->set.id)
+    {
+    case 1:
+        riddleHandlerPB(message, current_session);
+        break;
     
+    /* aggiungere gli altri scenari qui*/
+    }
 }
 
 /**
  * Funzione per gestire lo scambio di messaggi tra i due client
+ * @param message risposta inviata
  * @param session* sessione in questione
 */
-void callHandler(struct session* current_session)
+void callHandler(struct mex message, struct session* current_session)
 {
-
+    /* switch per andare all'handler dello scenario */
+    switch (current_session->set.id)
+    {
+    case 1:
+        callHandlerPB(message, current_session);
+        break;
+    
+    /* aggiungere gli altri scenari qui*/
+    }
 }
 
