@@ -268,7 +268,6 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
                 printf("Comando take su oggetto non valido/non scoperto");
                 return;
             }
-
         }
     }
     /* formato per il comando take non valido */
@@ -310,17 +309,23 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
             }
         }
     }
+    /* TODO QUALCOSA NON WORKA */
     else if(strcmp(message.opt1, "telefono") == 0 && current_session->set.objs[1].found == true) {
         /* si può creare la bomba telefono sapone */
         if(strcmp(message.opt2, "sapone") == 0) {
             strcpy(buffer, objects[8].description);
             current_session->set.objs[8].found = true;
         }
-        /* controllo per chiamata al secondo utente */
-        /* else if ()
-        {
-            
-        } */
+        /* se il giocatore secondario è connesso si fa la chiamata */
+        else if (current_session->secondary)
+        {   
+            printf("Comunicazione con il secondo giocatore - ");
+            strcpy(buffer, "chiamata in corso");
+            send(current_session->secondary->socket, buffer, DIM_BUFFER, 0); 
+            memset(buffer, 0, DIM_BUFFER);
+            strcpy(buffer, "Chiamata in corso al secondino corrotto\n");
+            current_session->active_call = true;
+        }
         else strcpy(buffer, objects[1].use_description);
 
     }
@@ -423,5 +428,9 @@ void riddleHandlerPB(struct mex message, struct session* current_session)
 */
 void callHandlerPB(struct mex message, struct session* current_session)
 {
+    char buffer[DIM_BUFFER];
 
+    memset(buffer, 0, DIM_BUFFER);
+
+    
 }
