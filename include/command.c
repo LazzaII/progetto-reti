@@ -86,9 +86,9 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
     else if(current_session && current_session->active_riddle && strcmp(substringed_mex.command, "end") != 0) {
         riddleHandler(substringed_mex, current_session);
     } 
-    /* TODO controllo della comunicazione tra client*/
+    /* controllo della comunicazione tra client*/
     else if(current_session && current_session->active_call && strcmp(substringed_mex.command, "end") != 0) {
-        callHandler(substringed_mex, current_session);
+        callHandler(substringed_mex, current_session, type, master);
     }
     /* Switch dei comandi con relativa chiamata ai vari handler */
     else if(substringed_mex.ok == true) {
@@ -501,6 +501,7 @@ void useHandler(struct mex message, int socket, struct session* current_session,
         /* eliminazione fisica della sessione */
         free(current_session);
     }
+    /* TODO forse c´è da fare reset*/
 }
 
 /**
@@ -586,14 +587,15 @@ void riddleHandler(struct mex message, struct session* current_session)
  * Funzione per gestire lo scambio di messaggi tra i due client
  * @param message risposta inviata
  * @param session* sessione in questione
+ * @param char* tipo di utente
 */
-void callHandler(struct mex message, struct session* current_session)
+void callHandler(struct mex message, struct session* current_session, char* type, fd_set* master)
 {
     /* switch per andare all'handler dello scenario */
     switch (current_session->set.id)
     {
     case 1:
-        callHandlerPB(message, current_session);
+        callHandlerPB(message, current_session, type, master);
         break;
     
     /* aggiungere gli altri scenari qui*/

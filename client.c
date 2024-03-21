@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
     printf("%s\n"
             "******************************************************\n\n", buffer);
     
-
     FD_ZERO(&master);
     FD_ZERO(&read_fds);
 
@@ -105,7 +104,7 @@ int main(int argc, char *argv[])
                 }
                 /* Altrimenti è il server che invia messaggi direttamente, come infos e join del giocatore secondario*/
                 else if(i == fdmax) {
-                    memset(buffer, 0, sizeof(buffer));
+                    memset(buffer, 0, DIM_BUFFER);
                     ret = recv(fdmax, buffer, DIM_BUFFER, 0);
 
                     if(ret == 0) {
@@ -118,7 +117,7 @@ int main(int argc, char *argv[])
                         exit(1);
                     }
 
-                    /* reset del canSend in caso di chiamata in corso*/
+                    /* set a true del canSend in caso di chiamata in corso*/
                     if(strcmp(buffer, "chiamata in corso") == 0) {
                         canSend = true;
                         if(strcmp(choosenSet, "1") == 0) /* Prison Break*/
@@ -131,7 +130,9 @@ int main(int argc, char *argv[])
                         || strstr(buffer, "giocatore inserito non esistente") != NULL
                         || strstr(buffer, "devi prima fare login") != NULL 
                         || strstr(buffer, "devi prima avviare una partita") != NULL
-                        || strstr(buffer, "ALERT") != NULL) {
+                        || strstr(buffer, "ALERT") != NULL
+                        || strstr(buffer, "Richiesta errata") != NULL
+                        || strstr(buffer, "Monete insufficienti") != NULL) {
 
                         canSend = true;
                     }
