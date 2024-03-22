@@ -120,8 +120,9 @@ int main(int argc, char *argv[])
                     /* set a true del canSend in caso di chiamata in corso*/
                     if(strcmp(buffer, "chiamata in corso") == 0) {
                         canSend = true;
-                        if(strcmp(choosenSet, "1") == 0) /* Prison Break*/
-                            printf("\nUn prigioniero ti sta chiamando, quanti solti gli vuoi chiedere?\n");
+                        if(strcmp(choosenSet, "1") == 0) { /* Prison Break*/
+                            printf("\nUn prigioniero ti sta chiamando, quanti soldi gli vuoi chiedere?\n");
+                        } 
                         /*else if(...) per gli altri scenari */
                     }  
 
@@ -137,7 +138,8 @@ int main(int argc, char *argv[])
                         canSend = true;
                     }
 
-                    printf("%s\n", buffer);
+                    if(strcmp(buffer, "chiamata in corso") != 0) 
+                        printf("%s\n", buffer);
                 }
             }
         } 

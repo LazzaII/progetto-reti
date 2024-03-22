@@ -484,6 +484,8 @@ void useHandler(struct mex message, int socket, struct session* current_session,
     if(win == true) {
         printf("\n *** ESCAPE ROOM FINITA - chiusura della sessione di gioco ***");
 
+        /* TODO non chiude bene la sessione */
+
         /* chiusura della sessione */
         close(current_session->main->socket);
         FD_CLR(current_session->main->socket, master);

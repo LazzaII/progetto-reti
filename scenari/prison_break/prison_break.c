@@ -233,7 +233,7 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
     /* controllo se il messaggio è nel formato corretto */
     if(message.opt1 != NULL && message.opt2 == NULL) {
         /* controllo su McLovin */
-        if(strcmp(message.opt1, "McLovin") == 0) {
+        if(strcmp(message.opt1, "McLovin") == 0 || strcmp(message.opt1, "Sbarre") == 0 ) {
             strcpy(buffer, "Non è possibile fare take su questo oggetto\n");
             send(socket, buffer, DIM_BUFFER, 0); 
             printf("Comando take su oggetto non valido");
@@ -306,7 +306,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         }
         else strcpy(buffer, "Comando use su McLovin usato in maniera errata\n");
     }
-    else if(strcmp(message.opt1, "telefono") == 0 && current_session->set.objs[1].found == true) {
+    else if(strcmp(message.opt1, "telefono") == 0 && current_session->set.objs[1].pickedUp == true) {
         /* si può creare la bomba telefono sapone */
         if(message.opt2 && strcmp(message.opt2, "sapone") == 0) {
             strcpy(buffer, objects[8].description);
@@ -319,7 +319,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
             strcpy(buffer, "chiamata in corso");
             send(current_session->secondary->socket, buffer, DIM_BUFFER, 0); 
             memset(buffer, 0, DIM_BUFFER);
-            strcpy(buffer, "Chiamata in corso al secondino corrotto\n");
+            strcpy(buffer, "*** Chiamata in corso al secondino corrotto ***\n");
             current_session->active_call = true;
         }
         else strcpy(buffer, objects[1].use_description);
@@ -343,7 +343,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         }
         else strcpy(buffer, "Comando use su McLovin usato in maniera errata\n");
     }
-    else if(strcmp(message.opt1, "moente2") == 0 && current_session->set.objs[4].pickedUp == true) {
+    else if(strcmp(message.opt1, "monete2") == 0 && current_session->set.objs[4].pickedUp == true) {
         strcpy(buffer, objects[4].use_description);
     }
     else if(strcmp(message.opt1, "sapone") == 0 && current_session->set.objs[5].pickedUp == true) {
@@ -358,16 +358,16 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         strcpy(buffer, objects[6].use_description);
     }
     /* coi prossimi due oggetti si controlla se si è vinto*/
-    else if(strcmp(message.opt1, "sbarre") == 0 && current_session->set.objs[7].pickedUp == true) {
+    else if(strcmp(message.opt1, "sbarre") == 0 && current_session->set.objs[7].found == true) {
         if(message.opt2 && strcmp(message.opt2, "bomba") == 0) {
-            strcpy(buffer, "*** Complimenti sei riuscito ad evadere! Hai completato l'escape room! ***\n");
+            strcpy(buffer, "$$$ Complimenti sei riuscito ad evadere! Hai completato l'escape room! $$$\n");
             win = true;
         }
         else strcpy(buffer, objects[7].use_description);
     }
     else if(strcmp(message.opt1, "bomba") == 0 && current_session->set.objs[8].pickedUp == true) {
         if(message.opt2 && strcmp(message.opt2, "sbarre") == 0) {
-            strcpy(buffer, "*** Complimenti sei riuscito ad evadere! Hai completato l'escape room! ***\n");
+            strcpy(buffer, "$$$ Complimenti sei riuscito ad evadere! Hai completato l'escape room! $$$\n");
             win = true;
         }
         else strcpy(buffer, objects[8].use_description);
@@ -429,16 +429,14 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
     memset(buffer, 0, DIM_BUFFER);
 
     /* giocatore princiaple */
-    if(strcpy("MAIN", type) == 0) { 
-        strcpy(buffer, "chiamata in corso"); /* comando per attivare lo stdin al client secondario*/
-        send(current_session->secondary->socket, buffer, DIM_BUFFER, 0);
-        memset(buffer, 0, DIM_BUFFER);
-        strcpy(buffer, "*** Chiamata in corso al secondino, puoi continuare a giocare. ***\n");
+    if(strcmp("MAIN", type) == 0) { 
+        strcpy(buffer, "*** In attesa di risposta dal client secondario ***\n");
         send(current_session->main->socket, buffer, DIM_BUFFER, 0); 
-        printf("Chiamata del prigioniero al secondino");
+        printf("Prigioniero continua a chiamare il secondino");
     }
     /* giocatore secondario */
     else {
+        /* TODO non chiude bene la sessione*/
         printf("Risposta del secondino");
         /* controllo risposta del secondino che deve essere tra 1 e 3*/
         if(atoi(message.command) > 4 || atoi(message.command) < 0) {
@@ -449,11 +447,11 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
         /* se la richiesta di soldi è maggiore o uguale*/
         else if(atoi(message.command) >= current_session->secondary_token_pickedUp) {
             printf("\n *** ESCAPE ROOM FINITA - chiusura della sessione di gioco ***");
-            strcpy(buffer, "Complimenti hai vinto! Avevi abbastanza denaro per scappare, il secondino ti ha fatto evadere.\n");
+            strcpy(buffer, "$$$ Complimenti hai vinto! Avevi abbastanza denaro per scappare, il secondino ti ha fatto evadere. $$$\n");
             send(current_session->main->socket, buffer, DIM_BUFFER, 0); 
             memset(buffer, 0, DIM_BUFFER);
-            strcpy(buffer, "Il prigioniero aveva abbastanza denaro quindi l'hai fatto evadere\n");
-            send(current_session->main->socket, buffer, DIM_BUFFER, 0); 
+            strcpy(buffer, "$$$ Il prigioniero aveva abbastanza denaro quindi l'hai fatto evadere $$$\n");
+            send(current_session->secondary->socket, buffer, DIM_BUFFER, 0); 
 
             /* chiusura della partita */
             close(current_session->main->socket);
