@@ -244,8 +244,11 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
         for (i = 0; i < DIM_OBJECTS_PB; i++)
         {
             if(strcmp(objects[i].name, message.opt1) == 0 && current_session->set.objs[i].found == true) {
+                if(current_session->set.objs[i].pickedUp == true) {
+                    strcpy(buffer, "Oggetto già raccolto\n");
+                }
                 /* se l'oggetto è corretto si invia la risposta e si prende l'oggetto oggetti */
-                if(objects[i].is_token == true) {
+                else if(objects[i].is_token == true) {
                     strcpy(buffer, "Oggetto raccolto, era pure un token\n");
                     current_session->token_pickedUp++;
                 } 
@@ -445,7 +448,7 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
             send(current_session->secondary->socket, buffer, DIM_BUFFER, 0); 
         }  
         /* se la richiesta di soldi è maggiore o uguale*/
-        else if(atoi(message.command) >= current_session->secondary_token_pickedUp) {
+        else if(atoi(message.command) <= current_session->secondary_token_pickedUp) {
             printf("\n *** ESCAPE ROOM FINITA - chiusura della sessione di gioco ***");
             strcpy(buffer, "$$$ Complimenti hai vinto! Avevi abbastanza denaro per scappare, il secondino ti ha fatto evadere. $$$\n");
             send(current_session->main->socket, buffer, DIM_BUFFER, 0); 
@@ -466,13 +469,13 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
             free(current_session);
         } 
         else {
-            sprintf(buffer, "La risposta del secondino è %s, però te hai solo %d\nContinua a cercare monete oppure ad evadere in autonomia."
+            sprintf(buffer, "La risposta del secondino è %s, però te hai solo %d\nContinua a cercare monete oppure prova adevadere in autonomia."
                     , message.command, current_session->secondary_token_pickedUp);
             send(current_session->main->socket, buffer, DIM_BUFFER, 0); 
             memset(buffer, 0, DIM_BUFFER);
             strcpy(buffer, "*** Monete insufficienti da parte del prigioniero, in attesa di nuova chiamata... ***\n");
-            send(current_session->main->socket, buffer, DIM_BUFFER, 0); 
-            printf("Il prigioniero non aveva abbastanza denaro");
+            send(current_session->secondary->socket, buffer, DIM_BUFFER, 0); 
+            printf(" - Il prigioniero non aveva abbastanza denaro");
             current_session->active_call = false;
         }
     }

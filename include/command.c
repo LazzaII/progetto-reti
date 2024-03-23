@@ -114,10 +114,10 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
                 loginHandler(substringed_mex, socket);
         }
         /* comandi di inizio gioco*/
-        else if (strcmp(substringed_mex.command, "start") == 0) {
+        else if (strcmp(substringed_mex.command, "start") == 0) {            
             /* si controlla se l'utente ha già fatto login, se lo ha fatto si controlla che non sia già in partita*/
             if(userLogged(socket) == true) {
-                if((strcmp(type, "MAIN") == 0 && current_session->main->inGame) || ((strcmp(type, "SEC") == 0) && current_session->secondary->inGame)) {
+                if(current_session && ((strcmp(type, "MAIN") == 0 && current_session->main->inGame) || ((strcmp(type, "SEC") == 0) && current_session->secondary->inGame))) {
                     strcpy(buffer, "Comando start non disponibile dopo aver già fatto start\n");
                     send(socket, buffer, DIM_BUFFER, 0); 
                     printf("Tentato comando start a partita iniziata");
