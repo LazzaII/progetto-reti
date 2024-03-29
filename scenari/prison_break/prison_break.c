@@ -465,8 +465,7 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
             FD_CLR(current_session->secondary->socket, master);
             logout(current_session->secondary);
 
-            /* eliminazione fisica della sessione */
-            free(current_session);
+            deleteSession(current_session->id);
         } 
         else {
             sprintf(buffer, "La risposta del secondino è %s, però te hai solo %d\nContinua a cercare monete oppure prova adevadere in autonomia."

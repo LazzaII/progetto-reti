@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
                                 printf("! Eliminazione della sessione\n");
                                 logout(current_session->secondary); 
                             }
-                            current_session = NULL; /* è già stata rimossa dalla lista nel login, manca solo da liberare lo spazio*/
+                            deleteSession(current_session->id);
                             printf("OK: Sessione eliminata con successo\n");
                         }
                         printf("SUCCES: Disconessione eseguita con successo\n"

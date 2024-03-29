@@ -79,8 +79,7 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
             logout(current_session->secondary);
         }
 
-        /* eliminazione fisica della sessione */
-        free(current_session);
+        deleteSession(current_session->id);
     }
     /* controllo di un indovinello attivo*/
     else if(current_session && current_session->active_riddle && strcmp(substringed_mex.command, "end") != 0) {
@@ -328,12 +327,7 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
             logout(current_session->secondary);
         }
 
-        /* eliminazione fisica della sessione */
-        if(sessions->next == NULL)
-            sessions = NULL;
-        else     
-            free(current_session);
-        
+        deleteSession(current_session->id);
     }
     /* nel caso di utente secondario va chiusa solo la connessione del client secondario */
     else {
@@ -500,8 +494,7 @@ void useHandler(struct mex message, int socket, struct session* current_session,
             logout(current_session->secondary);
         }
 
-        /* eliminazione fisica della sessione */
-        free(current_session);
+        deleteSession(current_session->id);
     }
     /* TODO forse c´è da fare reset*/
 }

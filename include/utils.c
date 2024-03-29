@@ -57,6 +57,7 @@ int remainingTime(time_t startTime)
 */
 bool gameOn()
 {
+    struct session* s = sessions;
     return sessions != NULL ? true : false;
 }
 
@@ -197,6 +198,29 @@ struct session* getSession(int socket, char* type)
 
     return tmp; /* in caso di null il giocatore ancora non ha usato il comando choose */
 }
+
+/**
+ * Funzione per eliminare una sessione in particolare
+ * @param id della sessione da eliminare
+*/
+void deleteSession(int id) 
+{
+    struct session* current = sessions, *previous = NULL;
+
+    while (current && current->id != id)
+    {
+        previous = current;
+        current = current->next;
+    }
+
+    if (current)
+    {
+        if (!previous) sessions = sessions->next;
+        else previous->next = current->next;
+
+        free(current);
+    }
+} 
 
 /**
  * Funzione per deallocare tutti gli utenti

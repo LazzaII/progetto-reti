@@ -25,6 +25,7 @@ void createUser(char* username, char* pwd);
 void createSession(int socket, int pos_set);
 struct session* firstFreeSession(int set);
 struct session* getSession(int socket, char* type);
+void deleteSession(int id) ;
 void deleteUsers();
 bool userLogged(int socket);
 
