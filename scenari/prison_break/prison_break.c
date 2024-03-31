@@ -293,8 +293,11 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
     
     memset(buffer, 0, DIM_BUFFER);
 
+    if(message.opt1 == NULL){
+        strcpy(buffer, "Comando use usato in maniera non valida, potrebbe essere dovuto al formato sbagliato oppure ad aver utilizzato il comando con oggetti non raccolti/scoperti\n");
+    }
     /* switch degli use, ad ogni comando è associato qualcosa di diverso con diverse sfumature*/
-    if(strcmp(message.opt1, "McLovin") == 0 && current_session->set.objs[0].found) {
+    else if(strcmp(message.opt1, "McLovin") == 0 && current_session->set.objs[0].found) {
         /* attivo il quiz se non è già stato attivato */
         if(message.opt2 == NULL) {
             if(current_session->set.objs[0].riddle->solved == false) {
@@ -375,9 +378,9 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         }
         else strcpy(buffer, objects[8].use_description);
     }
-    else 
+    else {
         strcpy(buffer, "Comando use usato in maniera non valida, potrebbe essere dovuto al formato sbagliato oppure ad aver utilizzato il comando con oggetti non raccolti/scoperti\n");
-   
+    }
     send(socket, buffer, DIM_BUFFER, 0); 
     printf("Usato comando use");
     return win;

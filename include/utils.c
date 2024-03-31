@@ -57,7 +57,6 @@ int remainingTime(time_t startTime)
 */
 bool gameOn()
 {
-    struct session* s = sessions;
     return sessions != NULL ? true : false;
 }
 
