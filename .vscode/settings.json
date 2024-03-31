@@ -6,6 +6,7 @@
         "auth.h": "c",
         "in.h": "c",
         "structure.h": "c",
-        "command.h": "c"
+        "command.h": "c",
+        "typeinfo": "c"
     }
 }

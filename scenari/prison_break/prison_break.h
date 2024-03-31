@@ -14,7 +14,8 @@
 #define DIM_OBJECTS_PB 9
 #define DIM_LOCATIONS_PB 3
 
-extern struct set prison_break;
+/* inizializzatore dello scenario */
+struct set initScenarioPB();
 
 /* handler specifici dello scenario */
 void lookHandlerPB(struct mex message, int socket, struct session* current_session); 
@@ -23,5 +24,6 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
 
 void riddleHandlerPB(struct mex message, struct session* current_session);
 void callHandlerPB(struct mex message, struct session* current_session, char* type, fd_set* master);
+
 
 #endif

@@ -86,7 +86,10 @@ struct set
     struct location* locations;
 
     /* oggetti dello scenario su cui si può fare subito take subito */
-    struct object* objs;
+    struct object* objects;
+
+    /* quiz dello scenario */
+    struct riddle* riddles;
 };
 
 /**

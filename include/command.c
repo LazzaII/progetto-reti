@@ -508,7 +508,7 @@ void useHandler(struct mex message, int socket, struct session* current_session,
 void objsHandler(struct mex message, int socket, struct session* current_session)
 {
     int i = 0, max = 0;
-    struct object* objs = current_session->set.objs;
+    struct object* objs = current_session->set.objects;
     char buffer[DIM_BUFFER];
 
     memset(buffer, 0, DIM_BUFFER);

@@ -57,7 +57,6 @@ int remainingTime(time_t startTime)
 */
 bool gameOn()
 {
-    struct session* s = sessions;
     return sessions != NULL ? true : false;
 }
 
@@ -135,7 +134,7 @@ void createSession(int socket, int pos_set)
     switch (pos_set)
     {
         case 1: /* 1 -> Prison Break*/
-            s->set = prison_break;
+            s->set = initScenarioPB();
             break;
         /* aggiungere gli altri scenari qui*/
     }
