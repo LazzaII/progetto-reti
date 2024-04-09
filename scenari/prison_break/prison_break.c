@@ -6,14 +6,15 @@
 */
 struct set initScenarioPB() 
 {
+    /* TODO: lettura da file?*/
     
     struct set prison_break = {
         1,
         "Prison Break",
         "Sei in prigione. Ti trovi sul ++letto++, davanti a te c'è uno ++scaffale++ e una ++finestra++. Mentre dall'altro lato della stanza c'è il tuo compagno di stanza **McLovin**",
-        locations,
-        objects,
-        riddles,
+        ,
+        ,
+        ,
     };
 
     return prison_break;
