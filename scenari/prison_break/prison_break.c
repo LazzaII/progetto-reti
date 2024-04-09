@@ -338,7 +338,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         /* attivo il quiz se non è già stato attivato */
         if(message.opt2 == NULL) {
             if(current_session->set.objs[3].riddle->solved == false) {
-                strcpy(buffer, objects[0].use_description);
+                strcpy(buffer, objects[3].use_description);
                 send(socket, buffer, DIM_BUFFER, 0); 
                 memset(buffer, 0, DIM_BUFFER);
                 strcpy(buffer, objects[3].riddle->description);

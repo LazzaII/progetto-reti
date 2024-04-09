@@ -553,9 +553,9 @@ void sendInfos(struct session* current_session, int socket)
     memset(buffer, 0, DIM_BUFFER);
     /* valorizzaione delle info */
     sprintf(buffer, "\nSESSION INFOS - Tempo rimanente: %d "
-            "secondi , Token raccolti: %d" 
+            "secondi , Token raccolti: %d - rimanenti: %d" 
             ", Token secondari raccolti: %d\n",
-            remainingTime(current_session->start_time), current_session->token_pickedUp, current_session->secondary_token_pickedUp);
+            remainingTime(current_session->start_time), current_session->token_pickedUp, MAX_TOKEN_PB - current_session->token_pickedUp, current_session->secondary_token_pickedUp);
     /* inivio al client */
     send(socket, buffer, DIM_BUFFER, 0); 
 }
