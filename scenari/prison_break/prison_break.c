@@ -242,7 +242,7 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
                 current_session->pos_riddle = 0;
             }
             else {
-                strcpy(buffer, "Non puoi fare take su questo oggetto.\n");
+                strcpy(buffer, "Hai già risolto il quiz e l'oggetto non è raccoglibile, utlizza use per rivedere la soluzione.\n");
                 send(socket, buffer, DIM_BUFFER, 0); 
             }
             printf("Comando take sugli oggetti con quiz");
@@ -468,10 +468,9 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
     }
     /* giocatore secondario */
     else {
-        /* TODO non chiude bene la sessione*/
         printf("Risposta del secondino");
         /* controllo risposta del secondino che deve essere tra 1 e 3*/
-        if(atoi(message.command) > 4 || atoi(message.command) < 0) {
+        if(atoi(message.command) >= 4 || atoi(message.command) <= 0) {
             printf("Risposta del secondino non valida");
             strcpy(buffer, "Richiesta errata, puoi richiedere solamente tra 1 e 3 monete [compresi]\n");
             send(current_session->secondary->socket, buffer, DIM_BUFFER, 0); 
@@ -497,7 +496,7 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
             deleteSession(current_session->id);
         } 
         else {
-            sprintf(buffer, "La risposta del secondino è %s, però te hai solo %d\nContinua a cercare monete oppure prova ad evadere in autonomia."
+            sprintf(buffer, "La risposta del secondino è %s, però te hai solo %d\nContinua a cercare monete oppure prova ad evadere in autonomia.\n"
                     , message.command, current_session->secondary_token_pickedUp);
             send(current_session->main->socket, buffer, DIM_BUFFER, 0); 
             memset(buffer, 0, DIM_BUFFER);

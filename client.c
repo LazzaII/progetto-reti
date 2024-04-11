@@ -132,11 +132,13 @@ int main(int argc, char *argv[])
                         || strstr(buffer, "devi prima fare login") != NULL 
                         || strstr(buffer, "devi prima avviare una partita") != NULL
                         || strstr(buffer, "ALERT") != NULL
-                        || strstr(buffer, "Richiesta errata") != NULL
-                        || strstr(buffer, "Monete insufficienti") != NULL) {
+                        || strstr(buffer, "Richiesta errata") != NULL) {
 
                         canSend = true;
                     }
+
+                    if(strstr(buffer, "Monete insufficienti") != NULL)
+                        canSend = false;
 
                     if(strcmp(buffer, "chiamata in corso") != 0) 
                         printf("%s\n", buffer);
