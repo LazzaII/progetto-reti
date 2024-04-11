@@ -69,7 +69,20 @@ struct object
     bool is_token; /* se rappresenta un token */
     bool is_secondary_token; /* se rappresenta un token */
 
-    struct riddle* riddle; /* nel caso l'oggetto sia bloccato da un enigma */
+    int riddle; /* nel caso l'oggetto sia bloccato da un enigma */
+};
+
+/**
+ * Struttura per le varie locazioni dello scenraio, conterrà la lista di tutti gli oggetti in quella location
+*/
+struct location
+{
+    /* dati della location */
+    char* name;
+    char* description;
+
+    /* oggetti della location */
+    int objs[MAX_OBJ_LOC];
 };
 
 /**
@@ -90,19 +103,6 @@ struct set
 
     /* quiz dello scenario */
     struct riddle* riddles;
-};
-
-/**
- * Struttura per le varie locazioni dello scenraio, conterrà la lista di tutti gli oggetti in quella location
-*/
-struct location
-{
-    /* dati della location */
-    char* name;
-    char* description;
-
-    /* oggetti della location */
-    struct object* objs[MAX_OBJ_LOC];
 };
 
 /**

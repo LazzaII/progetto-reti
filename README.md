@@ -121,7 +121,7 @@ Il client aggiuntivo viene inserito nella prima partita disponibile.
 
 #### Soluzioni Enigmi
 
-1. Quiz di McLovin: Tempo di Anna.
+1. Quiz di McLovin: Anna.
 
 2. Lucchetto: 312211
 
@@ -129,7 +129,7 @@ Il client aggiuntivo viene inserito nella prima partita disponibile.
 
 Ci sono due possibli soluzioni, per la seconda soluzione è necessario che si connetta il client aggiuntivo
 
-1. Per uscire dalla prigione è necessario far "esplodere" le sbarre alle finestre. Per poterlo fare è necessario creare \*\*bomba\*\* e usarla con \*\*sbarre\*\*.
+1. Per uscire dalla prigione è necessario far "esplodere" le sbarre alla finestra. Per poterlo fare è necessario creare \*\*bomba\*\* e usarla con \*\*sbarre\*\*.
 Per creare \*\*bomba\*\* è necessario usare \*\*telefono\*\* e il \*\*sapone\*\*.
 
 2. Il client aggiuntivo ha lo scopo di Secondino Corrotto che ti può far uscire in cambio di denaro. Usando il \*\*telefono\*\*, se il client è connesso può chiedere un numero di \*\*monete\*\* per far uscire il prigioniero. Se il client principale (prigioniero) ha il numero di monete necessarie la partita finisce.

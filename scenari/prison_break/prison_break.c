@@ -5,16 +5,143 @@
  * @return il puntatore allo scenario 
 */
 struct set initScenarioPB() 
-{
-    /* TODO: lettura da file?*/
-    
+{    
     struct set prison_break = {
         1,
         "Prison Break",
         "Sei in prigione. Ti trovi sul ++letto++, davanti a te c'è uno ++scaffale++ e una ++finestra++. Mentre dall'altro lato della stanza c'è il tuo compagno di stanza **McLovin**",
-        ,
-        ,
-        ,
+        {
+            {
+                "Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono? Tempo di...\n",
+                "Anna",
+                0,
+                "Costruire una bomba è molto facile, hai provato con il t----on- e il s--o--?\n"
+            },
+            {
+                "Il codice del lucchetto è il continuo di questa sequenza.\n11\n21\n1211\n111221\n",
+                "312211",
+                0,
+                "Dentro la scatola c'è del **sapone** e altre **monete3**.\n"
+            }
+        },
+        {
+            { /* 0 */
+                "McLovin",
+                "McLovin è un ex chimico, forse può esserti utile.\n",
+                "Costruire una bomba è molto facile, hai provato con il t----on- e il s--o--?\n",
+                0,
+                0,
+                1, 
+                0,
+                0,
+                0 /* riddle in posizione 0*/
+            },
+            { /* 1 */
+                "telefono",
+                "Sul numero di telefono è salvato un solo numero.\n",
+                "Chiamo il numero salvato...\nBiiiip. Biiiip.\nNon risponde nessuno\n",
+                0,
+                0,
+                0, 
+                1,
+                0,
+                NULL
+            },
+            { /* 2 */
+                "monete1",
+                "Sono delle monete d'oro.\n",
+                "É uscita testa.\n",
+                0,
+                0,
+                0, 
+                0,
+                1,
+                NULL
+            },
+            { /* 3 */
+                "scatola",
+                "La scatola sembra chiusa. É bloccata da un lucchetto a sono 6 cifre.\n",
+                "Dentro la scatola c'è del **sapone** e altre **monete3**.\n",
+                0,
+                0,
+                0, 
+                0,
+                0,
+                1 /* riddle in posizione 1 */
+            },
+            { /* 4 */
+                "monete2",
+                "Sono delle monete d'oro.\n",
+                "É uscita croce.\n",
+                0,
+                0,
+                0, 
+                0,
+                1,
+                NULL
+            },
+            { /* 5 */
+                "sapone",
+                "Bagnodoccia Vidal, tutto in uno!\n",
+                "Ancora non è il momento di lavarsi.\n",
+                0,
+                0,
+                0, 
+                1,
+                0,
+                NULL
+            },
+            { /* 6 */
+                "monete3",
+                "Sono delle monete d'oro.\n",
+                "É uscita croce.\n",
+                0,
+                0,
+                0, 
+                0,
+                1,
+                NULL
+            },
+            { /* 7 */
+                "sbarre",
+                "Non sembrano così resistenti...\n",
+                "Non sono resistenti ma provare ad aprirle a mano è troppo dura.\n",
+                0,
+                0,
+                0, 
+                0,
+                0,
+                NULL
+            },
+            { /* 8 */
+                "bomba",
+                "Hai costruito **bomba**. Guarda cosa si può fare con del semplice sapone e delle batterie.\n",
+                "Sei folle?! Così ci farai saltare tutti in aria!\n",
+                0,
+                0,
+                0, 
+                1,
+                0,
+                NULL
+            }
+        },
+        {
+            {
+                "letto",
+                "Sotto il letto hai trovato un **telefono** e delle **monete1**",
+                {1, 2} /* oggetti 1 e 2 */
+            },
+            {
+                "scaffale",
+                "Nello scaffale c'è una **scatola** e delle **monete2**.",
+                {3, 4} /* oggetti 3 e 4 */
+            },
+            {
+                "finestra",
+                "la finestra ha le **sbarre**.",
+                {7, NULL} /* oggetto 7 */
+            }
+        }
     };
 
     return prison_break;
