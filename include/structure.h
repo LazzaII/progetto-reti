@@ -3,8 +3,10 @@
 
 #include <time.h>
 
-#define MAX_OBJ_LOC 2
 #define MAX_LOC_SET 3
+#define MAX_OBJ_SET 9
+#define MAX_RIDDLES_SET 2
+#define MAX_OBJ_LOC 2
 #define DIM_BUFFER 1024 /* grandezza buffer di client e server */
 
 /**
@@ -96,13 +98,13 @@ struct set
     char* description; /* per look senza paramentri */
 
     /* location dello scenario */
-    struct location* locations;
+    struct location locations[MAX_LOC_SET];
 
     /* oggetti dello scenario su cui si può fare subito take subito */
-    struct object* objects;
+    struct object objects[MAX_OBJ_SET];
 
     /* quiz dello scenario */
-    struct riddle* riddles;
+    struct riddle riddles[MAX_RIDDLES_SET];
 };
 
 /**

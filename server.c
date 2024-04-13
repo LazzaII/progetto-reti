@@ -91,17 +91,19 @@ int main(int argc, char *argv[])
                     printf("\n******************************************************\n");
                     if(strcmp(buffer, "stop") != 0) {
                         printf("WARN: Comando non riconosciuto.\n"
-                            "******************************************************\n");
+                            "******************************************************\n\n");
                         continue;
                     }
                     printf("! Chiusura del server...\n\n");
                     if(gameOn() == true) { /* se è presente una partita non termino */
                         printf("WARN: Impossibile terminare il server, il gioco è in corso.\n"
-                                "******************************************************\n");
+                                "******************************************************\n\n");
                         continue;
                     }
                     deleteUsers(); /* basta eliminare gli utenti perchè se siamo arrivati qui le sessioni sono già state deallocate */
                     close(listening_socket);
+                    FD_ZERO(&master);
+                    FD_ZERO(&readfds);
                     printf("OK: Server chiuso correttamente\n"
                             "******************************************************\n");
                     exit(0);
@@ -140,8 +142,6 @@ int main(int argc, char *argv[])
                     /* potrebbe returnane NULL se non trova niente (qualsiasi cosa prima di aver fatto comando start)*/
 
                     if(ret == 0) {
-                        /*TODO: in qualche modo non chiude per bene la sessione perchè gameOn non fa niente*/
-
                         /* se il client ancora non è entrato in nessuna sessione */
                         if(current_session == NULL) {
                             printf("******************************************************\n"

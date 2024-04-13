@@ -227,7 +227,7 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
     }
 
     /* se siamo in una partita attiva allora si inviano le info sulla sessione*/
-    if(current_session && remainingTime(current_session->start_time) != -1) 
+    if(current_session && remainingTime(current_session->start_time) != -1 && strcmp(type, "MAIN") == 0) 
         sendInfos(current_session, socket);
 }
 
@@ -311,7 +311,6 @@ void endHandler(struct session* current_session, char* type, fd_set* master)
 
     memset(buffer, 0, DIM_BUFFER);
 
-    /* TODO: QUALCOSA NON FUNZIONA QUI*/
     /* nel caso di utente principale va chiusa la connessione ad entrambi i client */
     if(strcmp(type, "MAIN") == 0) {
         /* chiusura del socket principale*/
@@ -479,8 +478,6 @@ void useHandler(struct mex message, int socket, struct session* current_session,
     if(win == true) {
         printf("\n *** ESCAPE ROOM FINITA - chiusura della sessione di gioco ***");
 
-        /* TODO non chiude bene la sessione */
-
         /* chiusura della sessione */
         close(current_session->main->socket);
         FD_CLR(current_session->main->socket, master);
@@ -497,7 +494,6 @@ void useHandler(struct mex message, int socket, struct session* current_session,
 
         deleteSession(current_session->id);
     }
-    /* TODO forse c´è da fare reset*/
 }
 
 /**
@@ -554,9 +550,9 @@ void sendInfos(struct session* current_session, int socket)
     memset(buffer, 0, DIM_BUFFER);
     /* valorizzaione delle info */
     sprintf(buffer, "\nSESSION INFOS - Tempo rimanente: %d "
-            "secondi , Token raccolti: %d - mancanti: %d" 
+            "secondi , Token raccolti: %d - rimanenti: %d" 
             ", Token secondari raccolti: %d\n",
-            remainingTime(current_session->start_time), current_session->token_pickedUp, MAX_TOKEN_PB - current_session->token_pickedUp ,current_session->secondary_token_pickedUp);
+            remainingTime(current_session->start_time), current_session->token_pickedUp, MAX_TOKEN_PB - current_session->token_pickedUp, current_session->secondary_token_pickedUp);
     /* inivio al client */
     send(socket, buffer, DIM_BUFFER, 0); 
 }

@@ -12,16 +12,19 @@ struct set initScenarioPB()
         "Sei in prigione. Ti trovi sul ++letto++, davanti a te c'è uno ++scaffale++ e una ++finestra++. Mentre dall'altro lato della stanza c'è il tuo compagno di stanza **McLovin**",
         {
             {
-                "Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono? Tempo di...\n",
-                "Anna",
-                0,
-                "Costruire una bomba è molto facile, hai provato con il t----on- e il s--o--?\n"
+                "letto",
+                "Sotto il letto hai trovato un **telefono** e delle **monete1**",
+                {1, 2} /* oggetti 1 e 2 */
             },
             {
-                "Il codice del lucchetto è il continuo di questa sequenza.\n11\n21\n1211\n111221\n",
-                "312211",
-                0,
-                "Dentro la scatola c'è del **sapone** e altre **monete3**.\n"
+                "scaffale",
+                "Nello scaffale c'è una **scatola** e delle **monete2**.",
+                {3, 4} /* oggetti 3 e 4 */
+            },
+            {
+                "finestra",
+                "la finestra ha le **sbarre**.",
+                {7, -1} /* oggetto 7, -1 per indicare che non c'è altro */
             }
         },
         {
@@ -45,7 +48,7 @@ struct set initScenarioPB()
                 0, 
                 1,
                 0,
-                NULL
+                -1 /* non quiz */
             },
             { /* 2 */
                 "monete1",
@@ -56,7 +59,7 @@ struct set initScenarioPB()
                 0, 
                 0,
                 1,
-                NULL
+                -1 /* non quiz */
             },
             { /* 3 */
                 "scatola",
@@ -78,7 +81,7 @@ struct set initScenarioPB()
                 0, 
                 0,
                 1,
-                NULL
+                -1 /* non quiz */
             },
             { /* 5 */
                 "sapone",
@@ -89,7 +92,7 @@ struct set initScenarioPB()
                 0, 
                 1,
                 0,
-                NULL
+                -1 /* non quiz */
             },
             { /* 6 */
                 "monete3",
@@ -100,7 +103,7 @@ struct set initScenarioPB()
                 0, 
                 0,
                 1,
-                NULL
+                -1 /* non quiz */
             },
             { /* 7 */
                 "sbarre",
@@ -111,7 +114,7 @@ struct set initScenarioPB()
                 0, 
                 0,
                 0,
-                NULL
+                -1 /* non quiz */
             },
             { /* 8 */
                 "bomba",
@@ -122,24 +125,21 @@ struct set initScenarioPB()
                 0, 
                 1,
                 0,
-                NULL
+                -1 /* non quiz */
             }
         },
         {
             {
-                "letto",
-                "Sotto il letto hai trovato un **telefono** e delle **monete1**",
-                {1, 2} /* oggetti 1 e 2 */
+                "Vediamo se sei stato attento. Sono di andata e di ritorno, chi sono? Tempo di...\n",
+                "Anna",
+                0,
+                "Costruire una bomba è molto facile, hai provato con il t----on- e il s--o--?\n"
             },
             {
-                "scaffale",
-                "Nello scaffale c'è una **scatola** e delle **monete2**.",
-                {3, 4} /* oggetti 3 e 4 */
-            },
-            {
-                "finestra",
-                "la finestra ha le **sbarre**.",
-                {7, NULL} /* oggetto 7 */
+                "Il codice del lucchetto è il continuo di questa sequenza.\n11\n21\n1211\n111221\n",
+                "312211",
+                0,
+                "Dentro la scatola c'è del **sapone** e altre **monete3**.\n"
             }
         }
     };
@@ -180,12 +180,11 @@ void lookHandlerPB(struct mex message, int socket, struct session* current_sessi
                     /* sblocco degli oggetti data la location*/
                     for (j = 0; j < MAX_OBJ_LOC; j++)
                     {
-                        if(current_session->set.locations[i].objs[j]) {
+                        if(current_session->set.locations[i].objs[j] != -1) { /* -1 indica che non ci sono altri elem*/
                             pos = current_session->set.locations[i].objs[j];
                             current_session->set.objects[pos].found = true;
                         }
                     }
-
                     return;
                 }
             }
@@ -225,18 +224,49 @@ void lookHandlerPB(struct mex message, int socket, struct session* current_sessi
 */
 void takeHandlerPB(struct mex message, int socket, struct session* current_session)
 {
-    int i;
+    int i, pos;
     char buffer[DIM_BUFFER];
     
     memset(buffer, 0, DIM_BUFFER);
 
     /* controllo se il messaggio è nel formato corretto */
     if(message.opt1 != NULL && message.opt2 == NULL) {
-        /* controllo su McLovin */
-        if(strcmp(message.opt1, "McLovin") == 0 || strcmp(message.opt1, "Sbarre") == 0 ) {
-            strcpy(buffer, "Non è possibile fare take su questo oggetto\n");
-            send(socket, buffer, DIM_BUFFER, 0); 
-            printf("Comando take su oggetto non valido");
+        /* controllo sui quiz */
+        if(strcmp(message.opt1, "McLovin") == 0) {
+            pos = current_session->set.objects[0].riddle;
+            if(current_session->set.riddles[pos].solved == false) {
+                strcpy(buffer, "Il tuo amico parlerà solo se risponderai bene ad un indovinello.\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                memset(buffer, 0, DIM_BUFFER);
+                strcpy(buffer, current_session->set.riddles[pos].description);
+                send(socket, buffer, DIM_BUFFER, 0); 
+                current_session->active_riddle = true;
+                current_session->pos_riddle = 0;
+            }
+            else {
+                strcpy(buffer, "Hai già risolto il quiz e l'oggetto non è raccoglibile, utlizza use per rivedere la soluzione.\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+            }
+            printf("Comando take sugli oggetti con quiz");
+            return;
+        }
+        if(strcmp(message.opt1, "scatola") == 0) {
+            pos = current_session->set.objects[3].riddle;
+            if(current_session->set.riddles[pos].solved == false) {
+                strcpy(buffer, "La chiave del lucchetto è la soluzione ad un semplice indovinello\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                memset(buffer, 0, DIM_BUFFER);
+                strcpy(buffer, current_session->set.riddles[pos].description);
+                send(socket, buffer, DIM_BUFFER, 0); 
+                current_session->active_riddle = true;
+                current_session->pos_riddle = 1;
+            }
+            else {
+                strcpy(buffer, "Oggetto raccolto\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                current_session->set.objects[3].pickedUp = true;
+            }
+            printf("Comando take sugli oggetti con quiz");
             return;
         }
 
@@ -288,30 +318,22 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
 */
 bool useHandlerPB(struct mex message, int socket, struct session* current_session)
 {
-    int pos;
     char buffer[DIM_BUFFER];
     bool win = false;
     
     memset(buffer, 0, DIM_BUFFER);
 
+    if(message.opt1 == NULL){
+        strcpy(buffer, "Comando use usato in maniera non valida, potrebbe essere dovuto al formato sbagliato oppure ad aver utilizzato il comando con oggetti non raccolti/scoperti\n");
+    }
     /* switch degli use, ad ogni comando è associato qualcosa di diverso con diverse sfumature*/
-    if(strcmp(message.opt1, "McLovin") == 0 && current_session->set.objects[0].found) {
-        /* attivo il quiz se non è già stato attivato */
+    else if(strcmp(message.opt1, "McLovin") == 0 && current_session->set.objects[0].found && current_session->set.riddles[current_session->set.objects[0].riddle].solved) {
         if(message.opt2 == NULL) {
-            pos = current_session->set.objects[0].riddle;
-            if(current_session->set.riddles[pos].solved == false) {
-                strcpy(buffer, current_session->set.objects[0].use_description);
-                send(socket, buffer, DIM_BUFFER, 0); 
-                memset(buffer, 0, DIM_BUFFER);
-                strcpy(buffer, current_session->set.riddles[pos].description);
-                current_session->active_riddle = true;
-                current_session->pos_riddle = 0;
-            }
-            else strcpy(buffer, "Quiz già risolto\n");
+            strcpy(buffer, current_session->set.objects[0].use_description);
         }
         else strcpy(buffer, "Comando use su McLovin usato in maniera errata\n");
     }
-    else if(strcmp(message.opt1, "telefono") == 0 && current_session->set.objects[1].pickedUp == true) {
+    else if(strcmp(message.opt1, "telefono") == 0 && current_session->set.objects[1].pickedUp) {
         /* si può creare la bomba telefono sapone */
         if(message.opt2 && strcmp(message.opt2, "sapone") == 0) {
             strcpy(buffer, current_session->set.objects[8].description);
@@ -330,59 +352,64 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         else strcpy(buffer, current_session->set.objects[1].use_description);
 
     }
-    else if(strcmp(message.opt1, "monete1") == 0 && current_session->set.objects[2].pickedUp == true) {
-        strcpy(buffer, current_session->set.objects[2].use_description);
-    }
-    else if(strcmp(message.opt1, "scatola") == 0 && current_session->set.objects[3].pickedUp == true) {
-        /* attivo il quiz se non è già stato attivato */
+    else if(strcmp(message.opt1, "monete1") == 0 && current_session->set.objects[2].pickedUp) {
         if(message.opt2 == NULL) {
-            pos = current_session->set.objects[0].riddle;
-            if(current_session->set.objects[3].riddle->solved == false) {
-                strcpy(buffer, current_session->set.objects[0].use_description);
-                send(socket, buffer, DIM_BUFFER, 0); 
-                memset(buffer, 0, DIM_BUFFER);
-                strcpy(buffer, current_session->set.objects[3].riddle->description);
-                current_session->active_riddle = true;
-                current_session->pos_riddle = 1;
-            }
-            else strcpy(buffer, "Quiz già risolto\n");
+            strcpy(buffer, current_session->set.objects[2].use_description);
+        }
+        else strcpy(buffer, "Comando use su monete1 usato in maniera errata\n");
+    }
+    else if(strcmp(message.opt1, "scatola") == 0 && current_session->set.objects[3].found && current_session->set.riddles[current_session->set.objects[3].riddle].solved) {
+        if(message.opt2 == NULL) {
+            strcpy(buffer, current_session->set.objects[3].use_description);
         }
         else strcpy(buffer, "Comando use su McLovin usato in maniera errata\n");
     }
-    else if(strcmp(message.opt1, "monete2") == 0 && current_session->set.objects[4].pickedUp == true) {
-        strcpy(buffer, current_session->set.objects[4].use_description);
+    else if(strcmp(message.opt1, "monete2") == 0 && current_session->set.objects[4].pickedUp) {
+        if(message.opt2 == NULL) {
+            strcpy(buffer, current_session->set.objects[4].use_description);
+        }
+        else strcpy(buffer, "Comando use su monete2 usato in maniera errata\n");
     }
-    else if(strcmp(message.opt1, "sapone") == 0 && current_session->set.objects[5].pickedUp == true) {
+    else if(strcmp(message.opt1, "sapone") == 0 && current_session->set.objects[5].pickedUp) {
         /* si può creare la bomba sapone telefono */
         if(message.opt2 && strcmp(message.opt2, "telefono") == 0) {
             strcpy(buffer, current_session->set.objects[8].description);
             current_session->set.objects[8].found = true;
         }
-        else strcpy(buffer, current_session->set.objects[5].use_description);
+        else if(message.opt2 == NULL) {
+            strcpy(buffer, current_session->set.objects[5].use_description);
+        }
+        else strcpy(buffer, "Comando use su sapome usato in maniera errata\n");
     }
-    else if(strcmp(message.opt1, "monete3") == 0 && current_session->set.objects[6].pickedUp == true) {
-        strcpy(buffer, current_session->set.objects[6].use_description);
-    }
+    else if(strcmp(message.opt1, "monete3") == 0 && current_session->set.objects[6].pickedUp) {
+        if(message.opt2 == NULL) {
+            strcpy(buffer, current_session->set.objects[6].use_description);
+        }
+        else strcpy(buffer, "Comando use su monete3 usato in maniera errata\n");    }
     /* coi prossimi due oggetti si controlla se si è vinto*/
-    else if(strcmp(message.opt1, "sbarre") == 0 && current_session->set.objects[7].found == true) {
+    else if(strcmp(message.opt1, "sbarre") == 0 && current_session->set.objects[7].found) {
         if(message.opt2 && strcmp(message.opt2, "bomba") == 0) {
             strcpy(buffer, "$$$ Complimenti sei riuscito ad evadere! Hai completato l'escape room! $$$\n");
             win = true;
         }
-        else strcpy(buffer, current_session->set.objects[7].use_description);
+        else if(message.opt2 == NULL) {
+            strcpy(buffer, current_session->set.objects[7].use_description);
+        }
+        else strcpy(buffer, "Comando use su monete2 usato in maniera errata\n");
     }
-    else if(strcmp(message.opt1, "bomba") == 0 && current_session->set.objects[8].pickedUp == true) {
+    else if(strcmp(message.opt1, "bomba") == 0 && current_session->set.objects[8].pickedUp) {
         if(message.opt2 && strcmp(message.opt2, "sbarre") == 0) {
             strcpy(buffer, "$$$ Complimenti sei riuscito ad evadere! Hai completato l'escape room! $$$\n");
             win = true;
         }
-        else strcpy(buffer, current_session->set.objects[8].use_description);
+        else if(message.opt2 == NULL) {
+            strcpy(buffer, current_session->set.objects[8].use_description);
+        }
+        else strcpy(buffer, "Comando use su monete2 usato in maniera errata\n");
     }
     else {
         strcpy(buffer, "Comando use usato in maniera non valida, potrebbe essere dovuto al formato sbagliato oppure ad aver utilizzato il comando con oggetti non raccolti/scoperti\n");
-        printf("dento use\n"); /*DEBUG*/
     }
-   
     send(socket, buffer, DIM_BUFFER, 0); 
     printf("Usato comando use");
     return win;
@@ -444,10 +471,9 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
     }
     /* giocatore secondario */
     else {
-        /* TODO non chiude bene la sessione*/
         printf("Risposta del secondino");
         /* controllo risposta del secondino che deve essere tra 1 e 3*/
-        if(atoi(message.command) > 4 || atoi(message.command) < 0) {
+        if(atoi(message.command) >= 4 || atoi(message.command) <= 0) {
             printf("Risposta del secondino non valida");
             strcpy(buffer, "Richiesta errata, puoi richiedere solamente tra 1 e 3 monete [compresi]\n");
             send(current_session->secondary->socket, buffer, DIM_BUFFER, 0); 
@@ -473,7 +499,7 @@ void callHandlerPB(struct mex message, struct session* current_session, char* ty
             deleteSession(current_session->id);
         } 
         else {
-            sprintf(buffer, "La risposta del secondino è %s, però te hai solo %d\nContinua a cercare monete oppure prova adevadere in autonomia."
+            sprintf(buffer, "La risposta del secondino è %s, però te hai solo %d\nContinua a cercare monete oppure prova ad evadere in autonomia.\n"
                     , message.command, current_session->secondary_token_pickedUp);
             send(current_session->main->socket, buffer, DIM_BUFFER, 0); 
             memset(buffer, 0, DIM_BUFFER);
