@@ -12,7 +12,7 @@ Autore
 
 ## Descrizione
 
-Il progetto consiste nella realizzazione di una applicazione client server. Per vedere la richiesta del professore consulatre il documento di analisi.
+Il progetto consiste nella realizzazione di una applicazione client-server. Per vedere la richiesta del professore consulatre il documento di analisi.
 Il file di documentazione è volutamente corto e conciso (e un pò bruttino) perchè era richiesto dal professore che fosse di massimo due pagine.
 
 ## Avvio
@@ -20,8 +20,11 @@ Il file di documentazione è volutamente corto e conciso (e un pò bruttino) per
 Per avviare è necessario scrivere da terminale:
 
 ```bash
-make 
+~$ make
+~$ ./exec2024.sh 
 ```
+
+Il comando make lo usiamo per compilare, mentre l'esecuzione dello script ci permette di avviare con un solo comando il server e i due client.
 
 ## Comandi
 
@@ -35,7 +38,7 @@ make
 
 ## Tema
 
-Era necessario implementare almeno uno scenario per l'escape room e scrivere il codice in maniera che fossero facilmente implementabili altri scenari, per questo motivo ho deciso di implementare una sola scena: "Prison Break"
+Era necessario implementare almeno uno scenario per l'escape room e scrivere il codice in maniera che fossero facilmente implementabili altri scenari, per questo motivo ho deciso di implementare un solo scenario: "Prison Break".
 
 ### Prison Break
 
