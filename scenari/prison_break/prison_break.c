@@ -155,7 +155,7 @@ struct set initScenarioPB()
 */
 void lookHandlerPB(struct mex message, int socket, struct session* current_session)
 {
-    int i, j;
+    int i, j, pos;
     char buffer[DIM_BUFFER];
     
     memset(buffer, 0, DIM_BUFFER);
@@ -180,8 +180,10 @@ void lookHandlerPB(struct mex message, int socket, struct session* current_sessi
                     /* sblocco degli oggetti data la location*/
                     for (j = 0; j < MAX_OBJ_LOC; j++)
                     {
-                        if(current_session->set.locations[i].objs[j])
-                            current_session->set.locations[i].objs[j]->found = true;
+                        if(current_session->set.locations[i].objs[j]) {
+                            pos = current_session->set.locations[i].objs[j];
+                            current_session->set.objects[pos].found = true;
+                        }
                     }
 
                     return;
@@ -286,6 +288,7 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
 */
 bool useHandlerPB(struct mex message, int socket, struct session* current_session)
 {
+    int pos;
     char buffer[DIM_BUFFER];
     bool win = false;
     
@@ -295,11 +298,12 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
     if(strcmp(message.opt1, "McLovin") == 0 && current_session->set.objects[0].found) {
         /* attivo il quiz se non è già stato attivato */
         if(message.opt2 == NULL) {
-            if(current_session->set.objects[0].riddle->solved == false) {
+            pos = current_session->set.objects[0].riddle;
+            if(current_session->set.riddles[pos].solved == false) {
                 strcpy(buffer, current_session->set.objects[0].use_description);
                 send(socket, buffer, DIM_BUFFER, 0); 
                 memset(buffer, 0, DIM_BUFFER);
-                strcpy(buffer, current_session->set.objects[0].riddle->description);
+                strcpy(buffer, current_session->set.riddles[pos].description);
                 current_session->active_riddle = true;
                 current_session->pos_riddle = 0;
             }
@@ -332,6 +336,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
     else if(strcmp(message.opt1, "scatola") == 0 && current_session->set.objects[3].pickedUp == true) {
         /* attivo il quiz se non è già stato attivato */
         if(message.opt2 == NULL) {
+            pos = current_session->set.objects[0].riddle;
             if(current_session->set.objects[3].riddle->solved == false) {
                 strcpy(buffer, current_session->set.objects[0].use_description);
                 send(socket, buffer, DIM_BUFFER, 0); 

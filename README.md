@@ -25,7 +25,7 @@ make
 
 ## Comandi
 
-* start *room*
+* start *room* *type*
 * look [*object* | *location*]
 * take *object*
 * use *object* [*object*] 
