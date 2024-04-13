@@ -253,7 +253,7 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
         if(strcmp(message.opt1, "scatola") == 0) {
             pos = current_session->set.objects[3].riddle;
             if(current_session->set.riddles[pos].solved == false) {
-                strcpy(buffer, "La chiave del lucchetto è la soluzione ad un semplice indovinello\n");
+                strcpy(buffer, "La scatola è chiusa da un lucchetto. Il codice del lucchetto è la soluzione ad un semplice indovinello.\n");
                 send(socket, buffer, DIM_BUFFER, 0); 
                 memset(buffer, 0, DIM_BUFFER);
                 strcpy(buffer, current_session->set.riddles[pos].description);
