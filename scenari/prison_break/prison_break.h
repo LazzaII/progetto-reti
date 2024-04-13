@@ -10,7 +10,6 @@
 #include "../../include/structure.h"
 #include "../../include/auth.h"
 
-#define DIM_RIDDLES_PB 2
 #define DIM_OBJECTS_PB 9
 #define DIM_LOCATIONS_PB 3
 #define MAX_TOKEN_PB 3
