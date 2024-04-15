@@ -78,12 +78,14 @@ int main(int argc, char *argv[])
     
     for(;;) 
     {
+        /* printf("for infinito\n"); */
         memset(buffer, 0, DIM_BUFFER);
         readfds = master;
         select(fdmax + 1, &readfds, NULL, NULL, NULL);
 
         for(i = 0; i <= fdmax; i++) 
         {
+            /* printf("for fdmax\n"); */
             if(FD_ISSET(i, &readfds)) {
                 /* Controllo dello STDIN per ricezione comandi diretti al server */
                 if(i == STDIN_FILENO) {
@@ -146,7 +148,8 @@ int main(int argc, char *argv[])
                         if(current_session == NULL) {
                             printf("******************************************************\n"
                               "! Sconnessione socket %d in corso...\n", i);
-                            close(i);
+                            close(i);  
+                            FD_CLR(i, &master);
                             printf("Socket %d chiuso.\n"
                                     "Il socket non faceva parte di nessuna partita.\n", i);
                             printf("SUCCES: Disconessione eseguita con successo\n"
@@ -207,6 +210,7 @@ int main(int argc, char *argv[])
                     printf("\n******************************************************\n\n");
                 }
             }
+            /* printf("fine for fdmax\n"); */
         } 
     }
 }

@@ -60,6 +60,13 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
 
     memset(buffer, 0, DIM_BUFFER);
 
+    if(substringed_mex.command == NULL) {
+        printf("Inviato spazio");
+        strcpy(buffer, "Comando non valido\n");
+        send(socket, buffer, DIM_BUFFER, 0); 
+        return;
+    }
+
     /* check fine tempo */
     if(current_session && remainingTime(current_session->start_time) == -1){
         strcpy(buffer, "Tempo scaduto, hai perso!\n");
