@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
                         exit(1);
                     }
 
+
                     /* se al momento dell'inserimento del comando di start si sceglie il personaggio secondario blocchiamo l'invio al server, 
                     il client secondario deve interagire solo quando viene chiamata*/
                     if(strstr(buffer, "start") != NULL) {
@@ -98,7 +99,7 @@ int main(int argc, char *argv[])
                         if(strcmp(buffer, "2") == 0)
                             canSend = false;
                         else 
-                            canSend = true;    
+                            canSend = true; 
                     }
                     
                 }

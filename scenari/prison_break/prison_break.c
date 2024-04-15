@@ -379,7 +379,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         else if(message.opt2 == NULL) {
             strcpy(buffer, current_session->set.objects[5].use_description);
         }
-        else strcpy(buffer, "Comando use su sapome usato in maniera errata\n");
+        else strcpy(buffer, "Comando use su saponee usato in maniera errata\n");
     }
     else if(strcmp(message.opt1, "monete3") == 0 && current_session->set.objects[6].pickedUp) {
         if(message.opt2 == NULL) {
@@ -395,17 +395,17 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         else if(message.opt2 == NULL) {
             strcpy(buffer, current_session->set.objects[7].use_description);
         }
-        else strcpy(buffer, "Comando use su monete2 usato in maniera errata\n");
+        else strcpy(buffer, "Comando use su sbarre usato in maniera errata\n");
     }
     else if(strcmp(message.opt1, "bomba") == 0 && current_session->set.objects[8].pickedUp) {
-        if(message.opt2 && strcmp(message.opt2, "sbarre") == 0) {
+        if(message.opt2 && strcmp(message.opt2, "sbarre") == 0 && current_session->set.objects[7].found) {
             strcpy(buffer, "$$$ Complimenti sei riuscito ad evadere! Hai completato l'escape room! $$$\n");
             win = true;
         }
         else if(message.opt2 == NULL) {
             strcpy(buffer, current_session->set.objects[8].use_description);
         }
-        else strcpy(buffer, "Comando use su monete2 usato in maniera errata\n");
+        else strcpy(buffer, "Comando use su bomba usato in maniera errata\n");
     }
     else {
         strcpy(buffer, "Comando use usato in maniera non valida, potrebbe essere dovuto al formato sbagliato oppure ad aver utilizzato il comando con oggetti non raccolti/scoperti\n");

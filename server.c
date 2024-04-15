@@ -148,6 +148,7 @@ int main(int argc, char *argv[])
                         if(current_session == NULL) {
                             printf("******************************************************\n"
                               "! Sconnessione socket %d in corso...\n", i);
+                            logout(findUserFromSocket(i)); /* non essendo loggato */
                             close(i);  
                             FD_CLR(i, &master);
                             printf("Socket %d chiuso.\n"

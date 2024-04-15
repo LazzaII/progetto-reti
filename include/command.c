@@ -80,7 +80,7 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
 
         /* invio della chiusura al secondo client */
         if(current_session->secondary) {
-            strcpy(buffer, "Il client principale ha deciso di terminare la partita\n");
+            strcpy(buffer, "Il client principale ha terminato il tempo a sua disposizione\n");
             send(current_session->secondary->socket, buffer, DIM_BUFFER, 0);   
             close(current_session->secondary->socket);
             FD_CLR(current_session->secondary->socket, master);
@@ -143,12 +143,6 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
             /* si controlla se ha usato il comando start*/
             if(current_session)
                 lookHandler(substringed_mex, socket, current_session);
-            /* controlliamo se è un giocatore secondario che nel caso non può usarlo */
-            else if(strcmp(type, "SEC") == 0) {
-                strcpy(buffer, "Comando non disponbile da giocatore secondario\n");
-                send(socket, buffer, DIM_BUFFER, 0); 
-                printf("Comando non disponbile da giocatore secondario");
-            }
             else {
                 strcpy(buffer, "Per usare questo comando devi prima avviare una partita\n");
                 send(socket, buffer, DIM_BUFFER, 0); 
@@ -159,12 +153,6 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
             /* si controlla se ha usato il comando start*/
             if(current_session)
                 takeHandler(substringed_mex, socket, current_session);
-            /* controlliamo se è un giocatore secondario che nel caso non può usarlo */
-            else if(strcmp(type, "SEC") == 0) {
-                strcpy(buffer, "Comando non disponbile da giocatore secondario\n");
-                send(socket, buffer, DIM_BUFFER, 0); 
-                printf("Comando non disponbile da giocatore secondario");
-            }
             else {
                 strcpy(buffer, "Per usare questo comando devi prima avviare una partita\n");
                 send(socket, buffer, DIM_BUFFER, 0); 
@@ -175,12 +163,6 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
             /* si controlla se ha usato il comando start*/
             if(current_session)
                 useHandler(substringed_mex, socket, current_session, master);
-            /* controlliamo se è un giocatore secondario che nel caso non può usarlo */
-            else if(strcmp(type, "SEC") == 0) {
-                strcpy(buffer, "Comando non disponbile da giocatore secondario\n");
-                send(socket, buffer, DIM_BUFFER, 0); 
-                printf("Comando non disponbile da giocatore secondario");
-            }
             else {
                 strcpy(buffer, "Per usare questo comando devi prima avviare una partita\n");
                 send(socket, buffer, DIM_BUFFER, 0); 
@@ -188,14 +170,13 @@ void commandSwitcher(int socket, char *message, char* type, struct session* curr
             }
         }
         else if (strcmp(substringed_mex.command, "objs") == 0) {
-            /* controllo che il giocatore che ha usato objs sia il principale */
-            if(strcmp(type, "SEC") == 0) {
-                strcpy(buffer, "Comando non valido da giocatore secondario\n");
-                send(socket, buffer, DIM_BUFFER, 0); 
-                printf("Comando non valido da giocatore secondario");
-            }
-            else 
+            if(current_session)
                 objsHandler(substringed_mex, socket, current_session);
+            else {
+                strcpy(buffer, "Per usare questo comando devi prima avviare una partita\n");
+                send(socket, buffer, DIM_BUFFER, 0); 
+                printf("Comando ancora non disponibile");
+            }
         }
         /* comando di terminazione */
         else if (strcmp(substringed_mex.command, "end") == 0) {
