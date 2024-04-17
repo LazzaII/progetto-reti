@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    ret = listen(listening_socket, 10);
+    ret = listen(listening_socket, MAX_CLIENT);
     if(ret < 0) {
         perror("ERR: Errore Listen - ");
         exit(1);

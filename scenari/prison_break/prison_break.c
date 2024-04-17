@@ -250,7 +250,7 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
             printf("Comando take sugli oggetti con quiz");
             return;
         }
-        if(strcmp(message.opt1, "scatola") == 0) {
+        else if(strcmp(message.opt1, "scatola") == 0) {
             pos = current_session->set.objects[3].riddle;
             if(current_session->set.riddles[pos].solved == false) {
                 strcpy(buffer, "La scatola è chiusa da un lucchetto. Il codice del lucchetto è la soluzione ad un semplice indovinello.\n");
@@ -267,6 +267,12 @@ void takeHandlerPB(struct mex message, int socket, struct session* current_sessi
                 current_session->set.objects[3].pickedUp = true;
             }
             printf("Comando take sugli oggetti con quiz");
+            return;
+        }
+        else if (strcmp(message.opt1, "sbarre") == 0) {
+            strcpy(buffer, "Questo oggetto non può essere raccolto!\n");
+            send(socket, buffer, DIM_BUFFER, 0); 
+            printf("Comando take su oggetto non raccoglibile");
             return;
         }
 
@@ -338,6 +344,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         if(message.opt2 && strcmp(message.opt2, "sapone") == 0) {
             strcpy(buffer, current_session->set.objects[8].description);
             current_session->set.objects[8].found = true;
+            current_session->set.objects[8].pickedUp = true;
         }
         /* se il giocatore secondario è connesso si fa la chiamata */
         else if (current_session->secondary)
@@ -375,6 +382,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         if(message.opt2 && strcmp(message.opt2, "telefono") == 0) {
             strcpy(buffer, current_session->set.objects[8].description);
             current_session->set.objects[8].found = true;
+            current_session->set.objects[8].pickedUp = true;
         }
         else if(message.opt2 == NULL) {
             strcpy(buffer, current_session->set.objects[5].use_description);
@@ -444,6 +452,7 @@ void riddleHandlerPB(struct mex message, struct session* current_session)
     }
     else {
         strcpy(buffer, "Risposta errata, ritenta\n");
+        current_session->active_riddle = false;
     }
 
     send(current_session->main->socket, buffer, DIM_BUFFER, 0); 

@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     struct sockaddr_in sv_addr;
     in_port_t porta = htons(SERVER_PORT);
 
-    char choosenSet[2];
+    char choosenSet[2], *tmp;
     /* per bloccare l'invio dei mex in caso di giocatore secondario */
     bool canSend = true;
 
@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
                 if(i == STDIN_FILENO) {
                     memset(buffer, 0, DIM_BUFFER);
                     fgets(buffer, DIM_BUFFER, stdin);
+
                     /* se siamo giocatori secondari e non usiamo il comando end*/
                     if(canSend == false  && strstr(buffer, "end") == NULL) {
                         printf("Ancora non sei stato interpellato dal giocatore principale\n");
@@ -92,14 +93,17 @@ int main(int argc, char *argv[])
 
                     /* se al momento dell'inserimento del comando di start si sceglie il personaggio secondario blocchiamo l'invio al server, 
                     il client secondario deve interagire solo quando viene chiamata*/
-                    if(strstr(buffer, "start") != NULL) {
+                    if(strcmp(buffer, "start ") != 0 && strstr(buffer, "start") != NULL) {
                         strtok(buffer, " "); 
                         strcpy(choosenSet, strtok(NULL, " "));
-                        strcpy(buffer, strtok(NULL, " "));
-                        if(strcmp(buffer, "2") == 0)
-                            canSend = false;
-                        else 
-                            canSend = true; 
+                        tmp = strtok(NULL, " ");
+                        if(tmp != NULL) {
+                            strcpy(buffer, tmp);
+                            if(strcmp(buffer, "2") == 0)
+                                canSend = false;
+                            else 
+                                canSend = true; 
+                        }
                     }
                     
                 }

@@ -7,6 +7,7 @@
 #define MAX_OBJ_SET 9
 #define MAX_RIDDLES_SET 2
 #define MAX_OBJ_LOC 2
+#define MAX_CLIENT 20 /* numero massimo di client che si possono connettere */
 #define DIM_BUFFER 1024 /* grandezza buffer di client e server */
 
 /**
