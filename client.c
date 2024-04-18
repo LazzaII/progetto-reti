@@ -94,15 +94,18 @@ int main(int argc, char *argv[])
                     /* se al momento dell'inserimento del comando di start si sceglie il personaggio secondario blocchiamo l'invio al server, 
                     il client secondario deve interagire solo quando viene chiamata*/
                     if(strcmp(buffer, "start ") != 0 && strstr(buffer, "start") != NULL) {
-                        strtok(buffer, " "); 
-                        strcpy(choosenSet, strtok(NULL, " "));
+                        strtok(buffer, " ");
                         tmp = strtok(NULL, " ");
                         if(tmp != NULL) {
-                            strcpy(buffer, tmp);
-                            if(strcmp(buffer, "2") == 0)
-                                canSend = false;
-                            else 
-                                canSend = true; 
+                            strcpy(choosenSet, tmp);
+                            tmp = strtok(NULL, " ");
+                            if(tmp != NULL) {
+                                strcpy(buffer, tmp);
+                                if(strcmp(buffer, "2") == 0)
+                                    canSend = false;
+                                else 
+                                    canSend = true; 
+                            }
                         }
                     }
                     

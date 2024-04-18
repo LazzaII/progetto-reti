@@ -387,7 +387,7 @@ bool useHandlerPB(struct mex message, int socket, struct session* current_sessio
         else if(message.opt2 == NULL) {
             strcpy(buffer, current_session->set.objects[5].use_description);
         }
-        else strcpy(buffer, "Comando use su saponee usato in maniera errata\n");
+        else strcpy(buffer, "Comando use su sapone usato in maniera errata\n");
     }
     else if(strcmp(message.opt1, "monete3") == 0 && current_session->set.objects[6].pickedUp) {
         if(message.opt2 == NULL) {
