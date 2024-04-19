@@ -89,9 +89,11 @@ int main(int argc, char *argv[])
             if(FD_ISSET(i, &readfds)) {
                 /* Controllo dello STDIN per ricezione comandi diretti al server */
                 if(i == STDIN_FILENO) {
-                    scanf("%s", buffer);
+                    memset(buffer, 0, DIM_BUFFER);
+                    fgets(buffer, DIM_BUFFER, stdin);
+
                     printf("\n******************************************************\n");
-                    if(strcmp(buffer, "stop") != 0) {
+                    if(strcmp(buffer, "stop\n") != 0) {
                         printf("WARN: Comando non riconosciuto.\n"
                             "******************************************************\n\n");
                         continue;
