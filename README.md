@@ -4,7 +4,9 @@
 
 Valutazione
 
-> --
+> 5/5
+
+e poi 29/30 all'esame totale.
 
 Autore
 

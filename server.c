@@ -213,7 +213,6 @@ int main(int argc, char *argv[])
                     printf("\n******************************************************\n\n");
                 }
             }
-            /* printf("fine for fdmax\n"); */
         } 
     }
 }
